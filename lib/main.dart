@@ -1,9 +1,10 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:taskshift_v1/constants/global_variables.dart';
-import 'package:taskshift_v1/features/login_signUp/login_signUp.dart';
-//import 'package:taskshift_v1/features/login_signUp/login_signUp.dart';
+import 'package:taskshift_v1/features/auth/auth_screen.dart';
+import 'package:taskshift_v1/router.dart';
 
 void main() => runApp(const MyApp());
 
@@ -20,13 +21,24 @@ class MyApp extends StatelessWidget {
       builder: (context, child) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-          title: 'First Method',
+          title: 'taskshift',
           // You can use the library anywhere in the app even in theme
           theme: ThemeData(
+            scaffoldBackgroundColor: AppColors.backgroundColor,
+            colorScheme: const ColorScheme.light(
+              primary: AppColors.colorBlue,
+            ),
+            appBarTheme: const AppBarTheme(
+              elevation: 0,
+              iconTheme: IconThemeData(
+                color: Colors.black,
+              ),
+            ),
             fontFamily: 'Nunito',
-            primarySwatch: Colors.blue,
+            //   primarySwatch: Colors.blue,
             // textTheme: Typography.englishLike2018.apply(fontSizeFactor: 1.sp),
           ),
+          onGenerateRoute: (settings) => generateRoute(settings),
           home: child,
         );
       },
@@ -48,21 +60,16 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     Timer(
       const Duration(seconds: 3),
-      () => Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const SigninSignout(),
-        ),
-      ),
+      // () => Navigator.pushNamed(context, AuthScreen.routeName),
+      () => Navigator.pushReplacementNamed(context, AuthScreen.routeName),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    var screenSize = MediaQuery.of(context).size;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 30.0),
-      color: Colors.white,
+      color: AppColors.backgroundColor,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -70,14 +77,14 @@ class _SplashScreenState extends State<SplashScreen> {
           const Spacer(),
           Image.asset(
             AssetImages.appLogo,
-            width: 300,
+            width: 600,
           ),
           const Spacer(),
           const Text(
             'Version 1.0',
             style: TextStyle(
               decoration: TextDecoration.none,
-              color: Colors.black38,
+              color: AppColors.colorGrey,
               fontWeight: FontWeight.w300,
               fontSize: 20.0,
             ),

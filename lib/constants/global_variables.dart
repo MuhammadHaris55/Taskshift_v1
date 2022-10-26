@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 
+const String appFontFamily = 'Nunito';
 class AssetImages {
   static String googleImage = 'assets/images/googleImge.png';
   static String appleImage = 'assets/images/apple.png';
   static String facebookImage = 'assets/images/facebook.png';
   static String appLogo = 'assets/images/Taskshift_logo.png';
   static String backscreen = 'assets/images/backscreen.png';
+  static String userDP = 'assets/images/imagesForChat/user-dp.png';
+
 }
 
 class AppColors {
@@ -17,25 +20,109 @@ class AppColors {
   //     Color.fromARGB(255, 241, 241, 244);
 }
 
-////////////////////////CustomClassForInkWell///////////////////////////////
-class customInkWell extends StatelessWidget {
-  // ignore: prefer_typing_uninitialized_variables
-  var image;
+class ChatMaterial {
+  static String userDP = 'assets/images/imagesForChat/user-dp.png';
+  static const List<Map<String, String>> inboxDataList = [
+    {
+      'name': 'geo10120',
+      'image': 'assets/images/imagesForChat/geo10120.png',
+      'msg': 'Welcome dude',
+    },
+    {
+      'name': 'evpartsguy',
+      'image': 'assets/images/imagesForChat/evpartsguy.png',
+      'msg': 'Hello, I really like your gig...',
+    },
+    {
+      'name': 'aspire2026',
+      'image': 'assets/images/imagesForChat/aspire2026.png',
+      'msg': 'Hi, I need your service. Are...',
+    },
+    {
+      'name': 'asemnaveed',
+      'image': 'assets/images/imagesForChat/asemnaveed.png',
+      'msg': 'Sent you a document',
+    },
+    {
+      'name': 'traynorthern',
+      'image': 'assets/images/imagesForChat/traynorthern.png',
+      'msg': 'Sent you a image',
+    },
+    {
+      'name': 'evpartsguy',
+      'image': 'assets/images/imagesForChat/evpartsguy.png',
+      'msg': 'Hello, I really like your gig...',
+    },
+    {
+      'name': 'aspire2026',
+      'image': 'assets/images/imagesForChat/aspire2026.png',
+      'msg': 'Hi, I need your service. Are...',
+    },
+    {
+      'name': 'asemnaveed',
+      'image': 'assets/images/imagesForChat/asemnaveed.png',
+      'msg': 'Sent you a document',
+    },
+    {
+      'name': 'traynorthern',
+      'image': 'assets/images/imagesForChat/traynorthern.png',
+      'msg': 'Sent you a image',
+    },
+  ];
 
-  customInkWell({
-    Key? key,
-    required this.image,
-  }) : super(key: key);
+  static const List<Map<String, String>> messagesList = [
+    {
+      'id': '1',
+      'msg': 'hi',
+    },
+    {
+      'id': '2',
+      'msg': 'hello',
+    },
+        {
+      'id': '1',
+      'msg': 'how are you ?',
+    },
+    {
+      'id': '2',
+      'msg': 'I\'m good',
+    },
+    {
+      'id': '2',
+      'msg': 'What about you?',
+    },
 
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      child: Image.asset(
-        image,
-        width: 50,
-        height: 50,
-      ),
-      onTap: () {},
-    );
-  }
+    {
+      'id': '1',
+      'msg': 'I\'m fine, thank you',
+    },
+    {
+      'id': '2',
+      'msg': 'great',
+    },
+    {
+      'id': '2',
+      'msg': '?',
+    },
+
+    {
+      'id': '1',
+      'msg': 'yes',
+    },
+    {
+      'id': '2',
+      'msg': 'I am learning flutter to create Mobile apps, are you willing to learn fluter with me?',
+    },
+
+    {
+      'id': '1',
+      'msg': 'Yeah, sure why not, I am more than happy to work with you. When will you starting it',
+    },
+    {
+      'id': '1',
+      'msg': '?',
+    },
+  ];
+
 }
+
