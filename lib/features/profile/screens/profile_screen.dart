@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taskshift_v1/features/auth/auth_screen.dart';
 import '../../../common/widgets/custom_text_widget.dart';
 import '../../../constants/global_variables.dart';
 import '../widgets/profile_details_row.dart';
@@ -21,10 +22,11 @@ class ProfileScreen extends StatelessWidget {
         //   ),
         // ),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
+        child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
-        child: SizedBox(
           width: double.infinity,
+          // height: MediaQuery.of(context).size.height * 0.80,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -54,9 +56,12 @@ class ProfileScreen extends StatelessWidget {
               profileDetailsRows(name: 'First Name:', value: 'Ayesha'),
               profileDetailsRows(name: 'Last Name:', value: 'Zaka'),
               profileDetailsRows(name: 'Full Name:', value: 'Ayesha Zaka'),
-              profileDetailsRows(name: 'Email:', value: 'ayeshazaka@gmail.com'),
-              const Spacer(),
+              profileDetailsRows(
+                  name: 'Email:', value: 'ayeshazaka@gmail.com'),
+              const SizedBox(height: 12.0),
+              // const Spacer(),
               Container(
+                alignment: Alignment.bottomCenter,
                 height: 55,
                 width: double.infinity,
                 decoration: BoxDecoration(
@@ -64,7 +69,7 @@ class ProfileScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(15),
                 ),
                 child: TextButton(
-                  onPressed: () {},
+                  onPressed: () => Navigator.pushNamedAndRemoveUntil(context, AuthScreen.routeName, (route) => false),
                   child: const Text(
                     'Logout',
                     style: TextStyle(

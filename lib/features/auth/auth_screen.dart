@@ -20,8 +20,19 @@ class _AuthScreenState extends State<AuthScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
-  String? role;
-  
+  String role = '';
+
+
+  @override
+  void dispose() {
+    super.dispose();
+    firstNameController.dispose();
+    lastNameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,23 +42,28 @@ class _AuthScreenState extends State<AuthScreen> {
         backgroundColor: Colors.transparent,
         centerTitle: false,
         title: Image(
-          image: AssetImage(AssetImages.appLogo),
+          image: AssetImage(
+            AssetImages.appLogo,
+          ),
+          height: 35,
         ),
         actions: [
           TextButton(
-            onPressed: () =>
-              signInBottomModal(
-                context,
-                firstNameController,
-                lastNameController,
-                emailController,
-                passwordController,
-                confirmPasswordController,
-              ),
-            
+            onPressed: () => signInBottomModal(
+              context,
+              firstNameController,
+              lastNameController,
+              emailController,
+              passwordController,
+              confirmPasswordController,
+              role,
+            ),
             child: Padding(
               padding: const EdgeInsets.only(right: 10.0),
-              child: SubtitleText(text: 'Sign In', color: AppColors.colorBlue,),
+              child: SubtitleText(
+                text: 'Sign In',
+                color: AppColors.colorBlue,
+              ),
               // Text(
               //   'Sign In',
               //   style: TextStyle(
@@ -77,5 +93,4 @@ class _AuthScreenState extends State<AuthScreen> {
       ),
     );
   }
-
 }

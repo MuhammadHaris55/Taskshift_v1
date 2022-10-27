@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
                 color: Colors.black,
               ),
             ),
-            fontFamily: 'Nunito',
+            fontFamily: appFontFamily,
             //   primarySwatch: Colors.blue,
             // textTheme: Typography.englishLike2018.apply(fontSizeFactor: 1.sp),
           ),

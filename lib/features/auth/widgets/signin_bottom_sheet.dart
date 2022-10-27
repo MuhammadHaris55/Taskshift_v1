@@ -3,18 +3,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:taskshift_v1/common/widgets/bottom_bar.dart';
 import 'package:taskshift_v1/common/widgets/custom_text_widget.dart';
+import 'package:taskshift_v1/features/auth/services/auth_services.dart';
+import 'package:taskshift_v1/features/auth/widgets/social_media_login.dart';
 
 import '../../../common/widgets/custom_text_form_field.dart';
 import '../../../constants/global_variables.dart';
 import 'signup_bottom_sheet.dart';
 
 signInBottomModal(
-    BuildContext context,
-    TextEditingController firstNameController,
-    TextEditingController lastNameController,
-    TextEditingController emailController,
-    TextEditingController passwordController,
-    TextEditingController confirmPasswordController) {
+  BuildContext context,
+  TextEditingController firstNameController,
+  TextEditingController lastNameController,
+  TextEditingController emailController,
+  TextEditingController passwordController,
+  TextEditingController confirmPasswordController,
+  String role,
+) {
+  final AuthService authService = AuthService();
+  final signInFormKey = GlobalKey<FormState>();
+
   return showModalBottomSheet<void>(
     backgroundColor: Colors.white,
     shape: RoundedRectangleBorder(
@@ -46,6 +53,7 @@ signInBottomModal(
                 ),
                 SizedBox(height: 27.0.h),
                 Form(
+                  key: signInFormKey,
                   child: Column(
                     children: [
                       CustomTextFormField(
@@ -58,6 +66,7 @@ signInBottomModal(
                         textEditingController: passwordController,
                         hintText: 'Password',
                         icon: const Icon(Icons.lock),
+                        obscure: true,
                       ),
                       SizedBox(height: 42.0.h),
                       Row(
@@ -74,41 +83,54 @@ signInBottomModal(
                             ),
                           ),
                           const Spacer(),
-                          FloatingActionButton(
-                            onPressed: () => Navigator.pushNamed(
-                                context, BottomBar.routeName),
-                            backgroundColor: AppColors.colorBlue,
+                          ElevatedButton(
+                              onPressed: () {
+                              if (signInFormKey.currentState!.validate()) {
+                                print('signIn');
+                                authService.userLogin(
+                                  context: context,
+                                  email: emailController.text.trim(),
+                                  password: passwordController.text.trim(),
+                                );
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              shape: const CircleBorder(),
+                              padding: const EdgeInsets.all(20),
+                            ),
                             child: Icon(
                               Icons.arrow_forward_sharp,
                               color: Colors.white,
                               size: 25.0.h,
                             ),
                           ),
+                          // FloatingActionButton(
+                          //   // onPressed: () => Navigator.pushNamed(
+                          //   //     context, BottomBar.routeName),
+                          //   onPressed: () {
+                          //     print('Sign in');
+                          //     // if (signInFormKey.currentState!.validate()) {
+                          //     //   authService.userLogin(
+                          //     //     context: context,
+                          //     //     email: emailController.text.trim(),
+                          //     //     password: passwordController.text.trim(),
+                          //     //   );
+                          //     // }
+                          //   },
+                          //   backgroundColor: AppColors.colorBlue,
+                          //   child: Icon(
+                          //     Icons.arrow_forward_sharp,
+                          //     color: Colors.white,
+                          //     size: 25.0.h,
+                          //   ),
+                          // ),
                         ],
                       ),
                       SizedBox(height: 40.0.h),
                     ],
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    InkWell(
-                      onTap: () {},
-                      child: Image.asset(AssetImages.googleImage),
-                    ),
-                    SizedBox(width: 37.0.w),
-                    InkWell(
-                      onTap: () {},
-                      child: Image.asset(AssetImages.appleImage),
-                    ),
-                    SizedBox(width: 37.0.w),
-                    InkWell(
-                      onTap: () {},
-                      child: Image.asset(AssetImages.facebookImage),
-                    )
-                  ],
-                ),
+                const SocialMediaLoginRow(),
                 SizedBox(height: 39.0.h),
                 RichText(
                   text: TextSpan(
@@ -129,6 +151,7 @@ signInBottomModal(
                               emailController,
                               passwordController,
                               confirmPasswordController,
+                              role,
                             );
                           },
                         text: 'Sign Up',

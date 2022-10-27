@@ -14,21 +14,31 @@ class profileDetailsRows extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5.0),
+      padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "$name ",
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.35,
+            child: Text(
+              "$name ",
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
             ),
           ),
-          Text(
-            "   $value",
-            style: const TextStyle(
-              color: AppColors.colorGrey,
-              fontSize: 18,
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.50,
+            child: Text(
+              value,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+              style: const TextStyle(
+                color: AppColors.colorGrey,
+                fontSize: 18,
+              ),
             ),
           ),
         ],

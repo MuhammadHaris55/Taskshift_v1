@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:taskshift_v1/constants/global_variables.dart';
 
 class CustomDropDownButton extends StatefulWidget {
-  const CustomDropDownButton({super.key});
+  String role;
+  CustomDropDownButton({
+    Key? key,
+    required this.role,
+  }) : super(key: key);
 
   @override
   State<CustomDropDownButton> createState() => _CustomDropDownButtonState();
 }
 
 class _CustomDropDownButtonState extends State<CustomDropDownButton> {
-  
-  String? dropdownValue = '';
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +35,7 @@ class _CustomDropDownButtonState extends State<CustomDropDownButton> {
         ],
       ),
       child: DropdownButton<String>(
-        value: dropdownValue,
+        value: widget.role,
         icon: const Icon(Icons.arrow_drop_down_outlined),
         style: const TextStyle(
           fontFamily: appFontFamily,
@@ -46,7 +49,7 @@ class _CustomDropDownButtonState extends State<CustomDropDownButton> {
         isExpanded: true,
         onChanged: (String? value) {
           setState(() {
-            dropdownValue = value!;
+            widget.role = value!;
           });
         },
         items: const [

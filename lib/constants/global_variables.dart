@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
 
+String uri = 'http://taskshift.test:3000';
 const String appFontFamily = 'Nunito';
+
+class Apis {
+  static String signUp = '$uri/api/signup';
+  static String login = '$uri/api/login';
+}
+
 class AssetImages {
-  static String googleImage = 'assets/images/googleImge.png';
-  static String appleImage = 'assets/images/apple.png';
-  static String facebookImage = 'assets/images/facebook.png';
+  // static String googleLogo = 'assets/images/google.jpg';  //  From Faiz --white background
+  static String googleLogo = 'assets/images/google.png';  //  From internet --transparent background
+  static String appleLogo = 'assets/images/apple.jpg';
+  static String facebookLogo = 'assets/images/facebook.jpg';
   static String appLogo = 'assets/images/Taskshift_logo.png';
   static String backscreen = 'assets/images/backscreen.png';
   static String userDP = 'assets/images/imagesForChat/user-dp.png';
@@ -79,7 +87,7 @@ class ChatMaterial {
       'id': '2',
       'msg': 'hello',
     },
-        {
+    {
       'id': '1',
       'msg': 'how are you ?',
     },

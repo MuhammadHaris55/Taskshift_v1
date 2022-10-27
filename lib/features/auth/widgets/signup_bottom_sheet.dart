@@ -4,9 +4,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:taskshift_v1/common/widgets/bottom_bar.dart';
 import 'package:taskshift_v1/common/widgets/custom_text_widget.dart';
 import 'package:taskshift_v1/constants/global_variables.dart';
+import 'package:taskshift_v1/features/auth/services/auth_services.dart';
 import '../../../common/widgets/custom_text_form_field.dart';
 import 'drop_down.button.dart';
 import 'signin_bottom_sheet.dart';
+import 'social_media_login.dart';
 
 signUpBottomModal(
   BuildContext context,
@@ -15,7 +17,11 @@ signUpBottomModal(
   TextEditingController emailController,
   TextEditingController passwordController,
   TextEditingController confirmPasswordController,
+  String role,
 ) {
+  AuthService authService = AuthService();
+  final signUpFormKey = GlobalKey<FormState>();
+
   return showModalBottomSheet<void>(
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(
@@ -46,6 +52,7 @@ signUpBottomModal(
                 ),
                 SizedBox(height: 27.0.h),
                 Form(
+                  key: signUpFormKey,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -71,15 +78,17 @@ signUpBottomModal(
                         textEditingController: passwordController,
                         hintText: 'Password',
                         icon: const Icon(Icons.lock),
+                        obscure: true,
                       ),
                       SizedBox(height: 21.0.h),
                       CustomTextFormField(
                         textEditingController: confirmPasswordController,
                         hintText: 'Confirm Password',
                         icon: const Icon(Icons.lock),
+                        obscure: true,
                       ),
                       SizedBox(height: 21.0.h),
-                      const CustomDropDownButton(),
+                      CustomDropDownButton(role: role),
                       SizedBox(height: 42.0.h),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -95,41 +104,48 @@ signUpBottomModal(
                             ),
                           ),
                           const Spacer(),
-                          FloatingActionButton(
-                            onPressed: () => Navigator.pushNamed(
-                                context, BottomBar.routeName),
-                            backgroundColor: AppColors.colorBlue,
+                          ElevatedButton(
+                              onPressed: () {
+                              if (signUpFormKey.currentState!.validate()) {
+                                print('signUp');
+                                authService.userSignUp(
+                                  context: context,
+                                  name: firstNameController.text.trim(),
+                                  lastName: lastNameController.text.trim(),
+                                  email: emailController.text.trim(),
+                                  password: passwordController.text.trim(),
+                                  passwordConfirmation: confirmPasswordController.text.trim(),
+                                  role: role,
+                                );
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              shape: const CircleBorder(),
+                              padding: const EdgeInsets.all(20),
+                            ),
                             child: Icon(
                               Icons.arrow_forward_sharp,
                               color: Colors.white,
                               size: 25.0.h,
                             ),
                           ),
+                          // FloatingActionButton(
+                          //   onPressed: () => Navigator.pushNamed(
+                          //       context, BottomBar.routeName),
+                          //   backgroundColor: AppColors.colorBlue,
+                          //   child: Icon(
+                          //     Icons.arrow_forward_sharp,
+                          //     color: Colors.white,
+                          //     size: 25.0.h,
+                          //   ),
+                          // ),
                         ],
                       ),
                       SizedBox(height: 40.0.h),
                     ],
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    InkWell(
-                      onTap: () {},
-                      child: Image.asset(AssetImages.googleImage),
-                    ),
-                    SizedBox(width: 37.0.w),
-                    InkWell(
-                      onTap: () {},
-                      child: Image.asset(AssetImages.appleImage),
-                    ),
-                    SizedBox(width: 37.0.w),
-                    InkWell(
-                      onTap: () {},
-                      child: Image.asset(AssetImages.facebookImage),
-                    )
-                  ],
-                ),
+                const SocialMediaLoginRow(),
                 SizedBox(height: 39.0.h),
                 RichText(
                   text: TextSpan(
@@ -150,6 +166,7 @@ signUpBottomModal(
                               emailController,
                               passwordController,
                               confirmPasswordController,
+                              role,
                             );
                           },
                         text: 'Sign In',

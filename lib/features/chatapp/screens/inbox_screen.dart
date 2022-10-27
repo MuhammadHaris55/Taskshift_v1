@@ -67,7 +67,7 @@ class _InboxScreenState extends State<InboxScreen> {
                       prefixIconColor: Colors.grey[600],
                       hintStyle: TextStyle(color: Colors.grey[600]),
                       hintText: "Search",
-                      fillColor: const Color.fromRGBO(112, 112, 112, 0.1),
+                      fillColor: const Color.fromRGBO(112, 112, 112, 0.05),
                     ),
                     cursorColor: Colors.grey[600],
                   ),

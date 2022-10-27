@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../constants/global_variables.dart';
@@ -6,17 +8,22 @@ class CustomTextFormField extends StatelessWidget {
   TextEditingController textEditingController;
   String hintText;
   Icon icon;
+  bool? obscure;
   CustomTextFormField({
     Key? key,
     required this.textEditingController,
     required this.hintText,
     required this.icon,
+    this.obscure,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 40.h,
+      // height: 40.h,
+      constraints: BoxConstraints(
+        minHeight: 40.h,
+      ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(5.0.r),
         color: Colors.white,
@@ -31,10 +38,23 @@ class CustomTextFormField extends StatelessWidget {
       ),
       child: TextFormField(
         controller: textEditingController,
+        obscureText: obscure ?? false,
         textCapitalization: TextCapitalization.sentences,
         // onChanged: (value) {
         //   textEditingController.text = value;
         // },
+        validator: (val) {
+          if (val == null || val.isEmpty) {
+            return 'Enter your $hintText';
+          }
+          if(hintText == 'Email')
+          {
+            if(!RegExp(r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$').hasMatch(val)) {
+              return 'Enter a valid email';
+            }
+          }
+          return null;
+        },
         decoration: InputDecoration(
           filled: true,
           fillColor: Colors.white,
