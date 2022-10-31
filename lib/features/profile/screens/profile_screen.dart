@@ -14,17 +14,10 @@ class ProfileScreen extends StatelessWidget {
         backgroundColor: AppColors.backgroundColor,
         centerTitle: true,
         title: SubtitleText(text: 'Profile'),
-        // const Text(
-        //   'Profile',
-        //   style: TextStyle(
-        //     color: Colors.black,
-        //     fontWeight: FontWeight.bold,
-        //   ),
-        // ),
       ),
       body: SingleChildScrollView(
         child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
           width: double.infinity,
           // height: MediaQuery.of(context).size.height * 0.80,
           child: Column(
@@ -56,8 +49,7 @@ class ProfileScreen extends StatelessWidget {
               profileDetailsRows(name: 'First Name:', value: 'Ayesha'),
               profileDetailsRows(name: 'Last Name:', value: 'Zaka'),
               profileDetailsRows(name: 'Full Name:', value: 'Ayesha Zaka'),
-              profileDetailsRows(
-                  name: 'Email:', value: 'ayeshazaka@gmail.com'),
+              profileDetailsRows(name: 'Email:', value: 'ayeshazaka@gmail.com'),
               const SizedBox(height: 12.0),
               // const Spacer(),
               Container(
@@ -69,7 +61,8 @@ class ProfileScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(15),
                 ),
                 child: TextButton(
-                  onPressed: () => Navigator.pushNamedAndRemoveUntil(context, AuthScreen.routeName, (route) => false),
+                  onPressed: () => Navigator.pushNamedAndRemoveUntil(
+                      context, AuthScreen.routeName, (route) => false),
                   child: const Text(
                     'Logout',
                     style: TextStyle(

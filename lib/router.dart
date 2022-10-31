@@ -4,7 +4,6 @@ import 'features/auth/auth_screen.dart';
 import 'features/chatapp/screens/chatroom_screen.dart';
 import 'features/chatapp/screens/inbox_screen.dart';
 
-
 Route<dynamic> generateRoute(RouteSettings routeSettings) {
   switch (routeSettings.name) {
     case AuthScreen.routeName:
@@ -32,7 +31,7 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
           receiver: receiver,
         ),
       );
-      
+
     default:
       return MaterialPageRoute(
         builder: (_) => const Scaffold(

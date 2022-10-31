@@ -10,13 +10,13 @@ class Apis {
 
 class AssetImages {
   // static String googleLogo = 'assets/images/google.jpg';  //  From Faiz --white background
-  static String googleLogo = 'assets/images/google.png';  //  From internet --transparent background
+  static String googleLogo =
+      'assets/images/google.png'; //  From internet --transparent background
   static String appleLogo = 'assets/images/apple.jpg';
   static String facebookLogo = 'assets/images/facebook.jpg';
   static String appLogo = 'assets/images/Taskshift_logo.png';
   static String backscreen = 'assets/images/backscreen.png';
   static String userDP = 'assets/images/imagesForChat/user-dp.png';
-
 }
 
 class AppColors {
@@ -99,7 +99,6 @@ class ChatMaterial {
       'id': '2',
       'msg': 'What about you?',
     },
-
     {
       'id': '1',
       'msg': 'I\'m fine, thank you',
@@ -112,25 +111,23 @@ class ChatMaterial {
       'id': '2',
       'msg': '?',
     },
-
     {
       'id': '1',
       'msg': 'yes',
     },
     {
       'id': '2',
-      'msg': 'I am learning flutter to create Mobile apps, are you willing to learn fluter with me?',
+      'msg':
+          'I am learning flutter to create Mobile apps, are you willing to learn fluter with me?',
     },
-
     {
       'id': '1',
-      'msg': 'Yeah, sure why not, I am more than happy to work with you. When will you starting it',
+      'msg':
+          'Yeah, sure why not, I am more than happy to work with you. When will you starting it',
     },
     {
       'id': '1',
       'msg': '?',
     },
   ];
-
 }
-

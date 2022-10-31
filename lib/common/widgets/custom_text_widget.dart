@@ -23,7 +23,6 @@ class TitleText extends StatelessWidget {
   }
 }
 
-
 class SubtitleText extends StatelessWidget {
   String text;
   Color? color;
@@ -82,7 +81,3 @@ class DetailText extends StatelessWidget {
     );
   }
 }
-
-
-
-

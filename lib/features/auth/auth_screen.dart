@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:taskshift_v1/common/widgets/custom_text_widget.dart';
 import 'package:taskshift_v1/constants/global_variables.dart';
-
 import 'widgets/signin_bottom_sheet.dart';
 
 enum SingingCharacter { lafayette, jefferson }
@@ -21,7 +20,6 @@ class _AuthScreenState extends State<AuthScreen> {
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
   String role = '';
-
 
   @override
   void dispose() {
@@ -64,16 +62,6 @@ class _AuthScreenState extends State<AuthScreen> {
                 text: 'Sign In',
                 color: AppColors.colorBlue,
               ),
-              // Text(
-              //   'Sign In',
-              //   style: TextStyle(
-              //     fontFamily: appFontFamily,
-              //     // fontFamily: 'Nunito',
-              //     color: AppColors.colorBlue,
-              //     fontWeight: FontWeight.bold,
-              //     fontSize: 18,
-              //   ),
-              // ),
             ),
           ),
         ],

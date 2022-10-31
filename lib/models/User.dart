@@ -33,7 +33,6 @@ class User {
     required this.skills,
   });
 
-  
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -75,7 +74,6 @@ class User {
   String toJson() => json.encode(toMap());
 
   factory User.fromJson(String source) => User.fromMap(json.decode(source));
-
 }
 
 // class User {

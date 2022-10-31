@@ -15,8 +15,7 @@ class SenderChatBubble extends StatelessWidget {
       children: [
         Flexible(
           child: Container(
-            padding:
-                const EdgeInsets.only(top: 10.0, right: 10.0, left: 10.0),
+            padding: const EdgeInsets.only(top: 10.0, right: 10.0, left: 10.0),
             constraints: BoxConstraints(
               maxWidth: MediaQuery.of(context).size.width / 1.35,
             ),
@@ -30,21 +29,21 @@ class SenderChatBubble extends StatelessWidget {
               ),
             ),
             child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(right: 15.0),
-                child: Text(
-                  message,
-                  style: const TextStyle(color: Colors.white, fontSize: 15),
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 15.0),
+                  child: Text(
+                    message,
+                    style: const TextStyle(color: Colors.white, fontSize: 15),
+                  ),
                 ),
-              ),
-              const Text(
-                '9:45AM',
-                style: TextStyle(color: Colors.white, fontSize: 10),
-              ),
-            ],
-          ),
+                const Text(
+                  '9:45AM',
+                  style: TextStyle(color: Colors.white, fontSize: 10),
+                ),
+              ],
+            ),
           ),
         ),
       ],

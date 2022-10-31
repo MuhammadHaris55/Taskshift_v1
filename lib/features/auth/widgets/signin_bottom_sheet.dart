@@ -1,7 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:taskshift_v1/common/widgets/bottom_bar.dart';
 import 'package:taskshift_v1/common/widgets/custom_text_widget.dart';
 import 'package:taskshift_v1/features/auth/services/auth_services.dart';
 import 'package:taskshift_v1/features/auth/widgets/social_media_login.dart';
@@ -84,9 +83,8 @@ signInBottomModal(
                           ),
                           const Spacer(),
                           ElevatedButton(
-                              onPressed: () {
+                            onPressed: () {
                               if (signInFormKey.currentState!.validate()) {
-                                print('signIn');
                                 authService.userLogin(
                                   context: context,
                                   email: emailController.text.trim(),
@@ -104,26 +102,6 @@ signInBottomModal(
                               size: 25.0.h,
                             ),
                           ),
-                          // FloatingActionButton(
-                          //   // onPressed: () => Navigator.pushNamed(
-                          //   //     context, BottomBar.routeName),
-                          //   onPressed: () {
-                          //     print('Sign in');
-                          //     // if (signInFormKey.currentState!.validate()) {
-                          //     //   authService.userLogin(
-                          //     //     context: context,
-                          //     //     email: emailController.text.trim(),
-                          //     //     password: passwordController.text.trim(),
-                          //     //   );
-                          //     // }
-                          //   },
-                          //   backgroundColor: AppColors.colorBlue,
-                          //   child: Icon(
-                          //     Icons.arrow_forward_sharp,
-                          //     color: Colors.white,
-                          //     size: 25.0.h,
-                          //   ),
-                          // ),
                         ],
                       ),
                       SizedBox(height: 40.0.h),

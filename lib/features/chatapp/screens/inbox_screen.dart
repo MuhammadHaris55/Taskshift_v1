@@ -22,13 +22,6 @@ class _InboxScreenState extends State<InboxScreen> {
         backgroundColor: AppColors.backgroundColor,
         centerTitle: true,
         title: SubtitleText(text: 'Inbox'),
-        // const Text(
-        //   'Inbox',
-        //   style: TextStyle(
-        //     color: Colors.black,
-        //     fontFamily: appFontFamily,
-        //   ),
-        // ),
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 15.0.w),
@@ -63,7 +56,10 @@ class _InboxScreenState extends State<InboxScreen> {
                       ),
                       floatingLabelStyle: TextStyle(color: Colors.grey[600]),
                       filled: true,
-                      prefixIcon: Icon(Icons.search, color: Colors.grey[600],),
+                      prefixIcon: Icon(
+                        Icons.search,
+                        color: Colors.grey[600],
+                      ),
                       prefixIconColor: Colors.grey[600],
                       hintStyle: TextStyle(color: Colors.grey[600]),
                       hintText: "Search",

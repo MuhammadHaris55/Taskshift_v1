@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../constants/global_variables.dart';
 
-
 class profileDetailsRows extends StatelessWidget {
   String name;
   String value;
@@ -46,6 +45,3 @@ class profileDetailsRows extends StatelessWidget {
     );
   }
 }
-
-
-

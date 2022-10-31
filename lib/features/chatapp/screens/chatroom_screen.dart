@@ -59,16 +59,20 @@ class ChatroomScreen extends StatelessWidget {
         children: [
           Expanded(
             child: ListView.builder(
-             reverse: true,
+              reverse: true,
               itemCount: ChatMaterial.messagesList.length,
               itemBuilder: (context, index) => Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 10.0, vertical: 10.0),
                 child: Column(
                   children: [
-                    ChatMaterial.messagesList[index]['id'] == '1' ?
-                    ReceiverChatBubble(image: receiver['image']!, message: ChatMaterial.messagesList[index]['msg']!,) :
-                    SenderChatBubble(message: ChatMaterial.messagesList[index]['msg']!),
-                    
+                    ChatMaterial.messagesList[index]['id'] == '1'
+                        ? ReceiverChatBubble(
+                            image: receiver['image']!,
+                            message: ChatMaterial.messagesList[index]['msg']!,
+                          )
+                        : SenderChatBubble(
+                            message: ChatMaterial.messagesList[index]['msg']!),
                   ],
                 ),
               ),
@@ -87,7 +91,7 @@ class ChatroomScreen extends StatelessWidget {
             child: TextFormField(
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 10.0, vertical: 10.0),
+                    horizontal: 20.0, vertical: 10.0),
                 floatingLabelStyle: TextStyle(color: Colors.grey[600]),
                 border: InputBorder.none,
                 suffixIcon: IconButton(
@@ -95,6 +99,7 @@ class ChatroomScreen extends StatelessWidget {
                   icon: const Icon(
                     Icons.send,
                     color: AppColors.colorBlue,
+                    size: 30.0,
                   ),
                 ),
                 hintText: "Write a message",

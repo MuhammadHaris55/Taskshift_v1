@@ -10,9 +10,7 @@ void httpErrorHandle({
   required BuildContext context,
   required VoidCallback onSuccess,
 }) {
-
-  if(jsonDecode(response.body)['success'])
-  {
+  if (jsonDecode(response.body)['success']) {
     onSuccess();
   } else {
     showSnackBar(context, jsonDecode(response.body)['response']);

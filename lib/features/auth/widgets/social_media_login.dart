@@ -15,11 +15,11 @@ class SocialMediaLoginRow extends StatelessWidget {
           onTap: () {},
           child: CircleAvatar(
             backgroundColor: Colors.transparent,
-          backgroundImage: AssetImage(
-            AssetImages.googleLogo,
+            backgroundImage: AssetImage(
+              AssetImages.googleLogo,
+            ),
+            radius: 25.0.w,
           ),
-          radius: 25.0.w,
-        ),
           // Image.asset(
           //   AssetImages.googleLogo,
           //   width: 45.0.w,

@@ -6,13 +6,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:taskshift_v1/features/auth/auth_screen.dart';
 
 import '../../../common/widgets/bottom_bar.dart';
 import '../../../constants/error_handling.dart';
 import '../../../constants/global_variables.dart';
 import '../../../constants/utils.dart';
 import '../../../providers/user_provider.dart';
-
 
 class AuthService {
 // sign up user
@@ -25,7 +25,10 @@ class AuthService {
     required String passwordConfirmation,
     required String role,
   }) async {
-    print('name $name -- l_name $lastName --- email $email ----password $password ---- p confirm $passwordConfirmation ---- type $role');
+    print(
+        'name $name -- l_name $lastName --- email $email ----password $password ---- p confirm $passwordConfirmation ---- type $role');
+
+    Navigator.pushNamed(context, AuthScreen.routeName);
     // try {
     //   http.Response res = await http.post(
     //     Uri.parse(Apis.signUp),
@@ -67,36 +70,38 @@ class AuthService {
     required String password,
   }) async {
     print('email $email ----- password $password');
+    Navigator.pushNamedAndRemoveUntil(
+        context, BottomBar.routeName, (route) => false);
 
-    try {
-      http.Response res = await http.post(
-        Uri.parse(Apis.login),
-        body: jsonEncode({
-          'email': email,
-          'password': password,
-        }),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-      );
+    // try {
+    //   http.Response res = await http.post(
+    //     Uri.parse(Apis.login),
+    //     body: jsonEncode({
+    //       'email': email,
+    //       'password': password,
+    //     }),
+    //     headers: <String, String>{
+    //       'Content-Type': 'application/json; charset=UTF-8',
+    //     },
+    //   );
 
-      httpErrorHandle(
-        response: res,
-        context: context,
-        onSuccess: () async {
-          SharedPreferences prefs = await SharedPreferences.getInstance();
-          Provider.of<UserProvider>(context, listen: false).setUser(res.body);
-          await prefs.setString('x-auth-token', jsonDecode(res.body)['api_token']);
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            BottomBar.routeName,
-            (route) => false,
-          );
-        },
-      );
-    } catch (e) {
-      showSnackBar(context, e.toString());
-    }
+    //   httpErrorHandle(
+    //     response: res,
+    //     context: context,
+    //     onSuccess: () async {
+    //       SharedPreferences prefs = await SharedPreferences.getInstance();
+    //       Provider.of<UserProvider>(context, listen: false).setUser(res.body);
+    //       await prefs.setString('x-auth-token', jsonDecode(res.body)['api_token']);
+    //       Navigator.pushNamedAndRemoveUntil(
+    //         context,
+    //         BottomBar.routeName,
+    //         (route) => false,
+    //       );
+    //     },
+    //   );
+    // } catch (e) {
+    //   showSnackBar(context, e.toString());
+    // }
   }
 
   // //get user data

@@ -1,7 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:taskshift_v1/common/widgets/bottom_bar.dart';
 import 'package:taskshift_v1/common/widgets/custom_text_widget.dart';
 import 'package:taskshift_v1/constants/global_variables.dart';
 import 'package:taskshift_v1/features/auth/services/auth_services.dart';
@@ -105,16 +104,16 @@ signUpBottomModal(
                           ),
                           const Spacer(),
                           ElevatedButton(
-                              onPressed: () {
+                            onPressed: () {
                               if (signUpFormKey.currentState!.validate()) {
-                                print('signUp');
                                 authService.userSignUp(
                                   context: context,
                                   name: firstNameController.text.trim(),
                                   lastName: lastNameController.text.trim(),
                                   email: emailController.text.trim(),
                                   password: passwordController.text.trim(),
-                                  passwordConfirmation: confirmPasswordController.text.trim(),
+                                  passwordConfirmation:
+                                      confirmPasswordController.text.trim(),
                                   role: role,
                                 );
                               }
@@ -129,16 +128,6 @@ signUpBottomModal(
                               size: 25.0.h,
                             ),
                           ),
-                          // FloatingActionButton(
-                          //   onPressed: () => Navigator.pushNamed(
-                          //       context, BottomBar.routeName),
-                          //   backgroundColor: AppColors.colorBlue,
-                          //   child: Icon(
-                          //     Icons.arrow_forward_sharp,
-                          //     color: Colors.white,
-                          //     size: 25.0.h,
-                          //   ),
-                          // ),
                         ],
                       ),
                       SizedBox(height: 40.0.h),
