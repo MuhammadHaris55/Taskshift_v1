@@ -43,7 +43,7 @@ class _AuthScreenState extends State<AuthScreen> {
           image: AssetImage(
             AssetImages.appLogo,
           ),
-          height: 35,
+          height: 55,
         ),
         actions: [
           TextButton(

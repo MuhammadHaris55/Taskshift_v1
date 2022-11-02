@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 
-String uri = 'http://taskshift.test:3000';
+String uri = 'https://taskshift.com';
+// String uri = 'http://taskshift.test';
+// String uri = 'http://taskshift.test:30001';
 const String appFontFamily = 'Nunito';
 
 class Apis {
   static String signUp = '$uri/api/signup';
   static String login = '$uri/api/login';
+  static String getUserData = '$uri/api/authenticated/user';
 }
 
 class AssetImages {
@@ -14,7 +17,8 @@ class AssetImages {
       'assets/images/google.png'; //  From internet --transparent background
   static String appleLogo = 'assets/images/apple.jpg';
   static String facebookLogo = 'assets/images/facebook.jpg';
-  static String appLogo = 'assets/images/Taskshift_logo.png';
+  // static String appLogo = 'assets/images/Taskshift_logo.png';  // It is blur
+  static String appLogo = 'assets/images/appLogo.png';
   static String backscreen = 'assets/images/backscreen.png';
   static String userDP = 'assets/images/imagesForChat/user-dp.png';
 }

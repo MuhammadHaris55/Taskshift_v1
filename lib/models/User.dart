@@ -1,18 +1,18 @@
 import 'dart:convert';
 
 class User {
-  final String id;
+  final int id;
   final String firstName;
   final String lastName;
   final String userName;
   final String displayName;
   final String email;
-  final String remainingBids;
+  final int remainingBids;
   final String apiToken;
   final String profileviewas;
   final String image;
   final String alphabeticImage;
-  final String identityVerify;
+  final int identityVerify;
   final String contactVerify;
   final List<String> skills;
 
@@ -54,20 +54,25 @@ class User {
 
   factory User.fromMap(Map<String, dynamic> map) {
     return User(
-      id: map['id'] ?? '',
+      id: map['id']?.toInt() ?? 0,
       firstName: map['first_name'] ?? '',
       lastName: map['last_name'] ?? '',
       userName: map['user_name'] ?? '',
       displayName: map['display_name'] ?? '',
       email: map['email'] ?? '',
-      remainingBids: map['remainingBids'] ?? '',
+      remainingBids: map['remainingBids']?.toInt() ?? 0,
       apiToken: map['api_token'] ?? '',
       profileviewas: map['profileviewas'] ?? '',
       image: map['image'] ?? '',
       alphabeticImage: map['alphabetic_image'] ?? '',
-      identityVerify: map['identity_verify'] ?? '',
+      identityVerify: map['identity_verify']?.toInt() ?? 0,
       contactVerify: map['contact_verify'] ?? '',
-      skills: List<String>.from(map['skills']),
+      // skills: List<String>.from(map['skills']),
+      skills: List<String>.from(
+        map['skills']?.map(
+          (x) => x,
+        ),
+      ),
     );
   }
 

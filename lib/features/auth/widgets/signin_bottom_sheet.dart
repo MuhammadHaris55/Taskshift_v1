@@ -85,6 +85,7 @@ signInBottomModal(
                           ElevatedButton(
                             onPressed: () {
                               if (signInFormKey.currentState!.validate()) {
+                                print('Sign In func in IF');
                                 authService.userLogin(
                                   context: context,
                                   email: emailController.text.trim(),

@@ -10,24 +10,24 @@ void httpErrorHandle({
   required BuildContext context,
   required VoidCallback onSuccess,
 }) {
-  if (jsonDecode(response.body)['success']) {
-    onSuccess();
-  } else {
-    showSnackBar(context, jsonDecode(response.body)['response']);
-  }
-
-  // switch (response.statusCode) {
-  //   case 200:
-  //     onSuccess();
-  //     break;
-  //   case 400:
-  //     showSnackBar(context, jsonDecode(response.body)['msg']);
-  //     break;
-  //   case 500:
-  //     showSnackBar(context, jsonDecode(response.body)['error']);
-  //     break;
-
-  //   default:
-  //     showSnackBar(context, response.body);
+  // if (jsonDecode(response.body)['success']) {
+  //   onSuccess();
+  // } else {
+  //   showSnackBar(context, jsonDecode(response.body)['response']);
   // }
+
+  switch (response.statusCode) {
+    case 200:
+      onSuccess();
+      break;
+    case 400:
+      showSnackBar(context, jsonDecode(response.body)['response']);
+      break;
+    case 500:
+      showSnackBar(context, jsonDecode(response.body)['response']);
+      break;
+
+    default:
+      showSnackBar(context, response.body);
+  }
 }

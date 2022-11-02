@@ -2,11 +2,26 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:taskshift_v1/common/widgets/bottom_bar.dart';
 import 'package:taskshift_v1/constants/global_variables.dart';
 import 'package:taskshift_v1/features/auth/auth_screen.dart';
+import 'package:taskshift_v1/providers/user_provider.dart';
 import 'package:taskshift_v1/router.dart';
 
-void main() => runApp(const MyApp());
+import 'features/auth/services/auth_services.dart';
+
+void main() => runApp(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(
+            create: (context) => UserProvider(),
+          ),
+        ],
+        child: const MyApp(),
+      ),
+    );
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -76,6 +91,7 @@ class MyApp extends StatelessWidget {
         );
       },
       child: const SplashScreen(),
+      // child: const AuthScreen(),
     );
   }
 }
@@ -88,42 +104,64 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  final AuthService authService = AuthService();
+
   @override
   void initState() {
     super.initState();
+    // authService.getUserData(context);
+    nextScreen();
+    // Timer(
+    //   const Duration(seconds: 3),
+    //   () => Provider.of<UserProvider>(context).user.apiToken.isNotEmpty
+    //       ? Navigator.pushReplacementNamed(context, BottomBar.routeName)
+    //       : Navigator.pushNamed(context, AuthScreen.routeName),
+    // );
+  }
+
+  nextScreen() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString('x-auth-token') ?? '';
+
     Timer(
       const Duration(seconds: 3),
       // () => Navigator.pushNamed(context, AuthScreen.routeName),
-      () => Navigator.pushReplacementNamed(context, AuthScreen.routeName),
+      () => token != ''
+          ? Navigator.pushReplacementNamed(context, BottomBar.routeName)
+          : Navigator.pushReplacementNamed(context, AuthScreen.routeName),
+      // () => const AuthScreen(),
+      // Navigator.pushNamed(context, AuthScreen.routeName),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 30.0),
-      color: AppColors.backgroundColor,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const SizedBox(height: 30.0),
-          const Spacer(),
-          Image.asset(
-            AssetImages.appLogo,
-            width: 600,
-          ),
-          const Spacer(),
-          const Text(
-            'Version 1.0',
-            style: TextStyle(
-              decoration: TextDecoration.none,
-              color: AppColors.colorGrey,
-              fontWeight: FontWeight.w300,
-              fontSize: 20.0,
+    return Scaffold(
+      body: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 30.0),
+        color: AppColors.backgroundColor,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const SizedBox(height: 30.0),
+            const Spacer(),
+            Image.asset(
+              AssetImages.appLogo,
+              width: 600,
             ),
-          ),
-          const SizedBox(height: 20.0),
-        ],
+            const Spacer(),
+            const Text(
+              'Version 1.0',
+              style: TextStyle(
+                decoration: TextDecoration.none,
+                color: AppColors.colorGrey,
+                fontWeight: FontWeight.w300,
+                fontSize: 20.0,
+              ),
+            ),
+            const SizedBox(height: 20.0),
+          ],
+        ),
       ),
     );
   }

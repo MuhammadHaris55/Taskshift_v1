@@ -1,14 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskshift_v1/features/auth/auth_screen.dart';
+import 'package:taskshift_v1/features/auth/services/auth_services.dart';
 import '../../../common/widgets/custom_text_widget.dart';
 import '../../../constants/global_variables.dart';
+import '../../../providers/user_provider.dart';
 import '../widgets/profile_details_row.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
   @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  final AuthService authService = AuthService();
+  List<String> profile = [];
+
+  @override
+  void initState() {
+    super.initState();
+    // authService.getUserData(context);
+    initProf();
+  }
+
+  initProf() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    profile = prefs.getStringList('profile') ?? [];
+    setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
+    var user = context.watch<UserProvider>().user;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.backgroundColor,
@@ -24,21 +50,29 @@ class ProfileScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               CircleAvatar(
-                backgroundImage: AssetImage(AssetImages.userDP),
+                // backgroundImage: AssetImage(AssetImages.userDP),
+                backgroundImage: NetworkImage(
+                  // user.image,
+                  profile.isNotEmpty
+                      ? profile[0]
+                      : 'https://imgs.search.brave.com/55eFn53foS1oKYLG96By3dUN27TkYdKvML9821unvy0/rs:fit:705:705:1/g:ce/aHR0cHM6Ly93d3cu/d29ybGRmdXR1cmVj/b3VuY2lsLm9yZy93/cC1jb250ZW50L3Vw/bG9hZHMvMjAyMC8w/Ni9ibGFuay1wcm9m/aWxlLXBpY3R1cmUt/OTczNDYwXzEyODAt/MS03MDV4NzA1LnBu/Zw',
+                ),
                 radius: 60,
               ),
               const SizedBox(height: 20.0),
-              const Text(
-                "Ayesha_zaka13",
-                style: TextStyle(
+              Text(
+                // user.userName,
+                profile.isNotEmpty ? profile[1] : '',
+                style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 24,
                 ),
               ),
               const SizedBox(height: 5.0),
-              const Text(
-                "Freelancer",
-                style: TextStyle(
+              Text(
+                profile.isNotEmpty ? profile[2] : '',
+                // user.profileviewas,
+                style: const TextStyle(
                   color: AppColors.colorGrey,
                   fontSize: 18,
                 ),
@@ -46,10 +80,17 @@ class ProfileScreen extends StatelessWidget {
               const SizedBox(height: 10.0),
               const Divider(),
               const SizedBox(height: 10.0),
-              profileDetailsRows(name: 'First Name:', value: 'Ayesha'),
-              profileDetailsRows(name: 'Last Name:', value: 'Zaka'),
-              profileDetailsRows(name: 'Full Name:', value: 'Ayesha Zaka'),
-              profileDetailsRows(name: 'Email:', value: 'ayeshazaka@gmail.com'),
+              profileDetailsRows(
+                  name: 'First Name:',
+                  value: profile.isNotEmpty ? profile[3] : ''),
+              profileDetailsRows(
+                  name: 'Last Name:',
+                  value: profile.isNotEmpty ? profile[4] : ''),
+              profileDetailsRows(
+                  name: 'Full Name:',
+                  value: profile.isNotEmpty ? profile[1] : ''),
+              profileDetailsRows(
+                  name: 'Email:', value: profile.isNotEmpty ? profile[5] : ''),
               const SizedBox(height: 12.0),
               // const Spacer(),
               Container(
@@ -61,8 +102,14 @@ class ProfileScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(15),
                 ),
                 child: TextButton(
-                  onPressed: () => Navigator.pushNamedAndRemoveUntil(
-                      context, AuthScreen.routeName, (route) => false),
+                  onPressed: () async {
+                    final SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    await prefs.setString('x-auth-token', '');
+                    await prefs.setStringList('profile', []);
+                    Navigator.pushNamedAndRemoveUntil(
+                        context, AuthScreen.routeName, (route) => false);
+                  },
                   child: const Text(
                     'Logout',
                     style: TextStyle(
