@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:taskshift_v1/common/widgets/custom_text_widget.dart';
-import 'package:taskshift_v1/features/chatapp/widgets/inbox_listtile.dart';
+import 'package:taskshift_v1/features/chatapp/screens/chatroom_screen.dart';
+import 'package:taskshift_v1/features/chatapp/services/inbox_servies.dart';
+import 'package:taskshift_v1/models/inbox.dart';
 import '../../../constants/global_variables.dart';
 
 class InboxScreen extends StatefulWidget {
   static const routeName = '/inbox-screen';
+
+  static var conversationList;
+
   const InboxScreen({super.key});
 
   @override
@@ -13,6 +18,22 @@ class InboxScreen extends StatefulWidget {
 }
 
 class _InboxScreenState extends State<InboxScreen> {
+  List<ChatModel>? conversationList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    getConversationList();
+  }
+
+  void getConversationList() async {
+    var responseList = await ChatRemoteService().getConversationListApi();
+    if (responseList != null) {
+      conversationList = responseList;
+    }
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,10 +93,57 @@ class _InboxScreenState extends State<InboxScreen> {
             ),
             const SizedBox(height: 5.0),
             Expanded(
-              child: ListView.builder(
-                itemCount: ChatMaterial.inboxDataList.length,
-                itemBuilder: (context, index) => InboxListTile(index: index),
-              ),
+              child: conversationList != null
+                  ? ListView.builder(
+
+                      /// here we are counting length of list of conversation
+                      itemCount: conversationList!.length,
+                      itemBuilder: (context, index) {
+                        return InkWell(
+                          onTap: () => Navigator.pushNamed(
+                            context,
+                            ChatroomScreen.routeName,
+                            arguments: conversationList![index],
+                          ),
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              backgroundImage: AssetImage(
+                                // "assets/images/clientimage.png",
+                                conversationList![index].userimage!,
+                              ),
+                              radius: 22.5,
+                            ),
+                            title: Text(
+                              // 'Samad Ilyas',
+                              conversationList![index].username!,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            subtitle: Text(
+                              // 'update me regarding app update me regarding app update me regarding ap p update me regarding app update me regarding app update me regarding app',
+                              conversationList![index].lastMessage!,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
+                            trailing: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  //'10:42 PM'
+                                  conversationList![index].lastMessageDateTime!,
+                                ),
+                                // Badge(
+                                //   badgeColor: const Color.fromRGBO(138, 165, 255, 1),
+                                //   badgeContent: const Text('3'),
+                                // ),
+                              ],
+                            ),
+                          ),
+                        );
+                      })
+                  : const Text("wait...."),
             ),
           ],
         ),
