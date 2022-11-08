@@ -12,16 +12,14 @@ import 'package:taskshift_v1/router.dart';
 
 import 'features/auth/services/auth_services.dart';
 
-void main() => runApp(
-      MultiProvider(
-        providers: [
-          ChangeNotifierProvider(
-            create: (context) => UserProvider(),
-          ),
-        ],
-        child: const MyApp(),
-      ),
-    );
+void main() => runApp(MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => UserProvider(),
+        ),
+      ],
+      child: const MyApp(),
+    ));
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -104,11 +102,12 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  final AuthService authService = AuthService();
+  // final AuthService authService = AuthService();
 
   @override
   void initState() {
     super.initState();
+    // print('auth serv fun');
     // authService.getUserData(context);
     nextScreen();
     // Timer(

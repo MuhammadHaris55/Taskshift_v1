@@ -1,15 +1,27 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+
 import '../../../constants/global_variables.dart';
 
 class SenderChatBubble extends StatelessWidget {
   String message;
+  String time;
+  String? url;
   SenderChatBubble({
     Key? key,
     required this.message,
+    required this.time,
+    this.url,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    String image = '';
+    if (url != '') {
+      var imageSplit = url!.split('src=').last.split('>').first.toString();
+      image = imageSplit.split('"').elementAt(1);
+      print('image ---> $image');
+    }
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
@@ -31,6 +43,24 @@ class SenderChatBubble extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
+                url != ''
+                    ?
+                    // Container(
+                    //     height: 150.0,
+                    //     decoration: BoxDecoration(
+                    //       image: DecorationImage(
+                    //         fit: BoxFit.fill,
+                    //         image: CachedNetworkImageProvider(image),
+                    //       ),
+                    //     ),
+                    //   )
+                    Column(
+                        children: [
+                          CachedNetworkImage(imageUrl: image),
+                          const SizedBox(height: 10.0),
+                        ],
+                      )
+                    : const SizedBox(),
                 Padding(
                   padding: const EdgeInsets.only(right: 15.0),
                   child: Text(
@@ -38,9 +68,9 @@ class SenderChatBubble extends StatelessWidget {
                     style: const TextStyle(color: Colors.white, fontSize: 15),
                   ),
                 ),
-                const Text(
-                  '9:45AM',
-                  style: TextStyle(color: Colors.white, fontSize: 10),
+                Text(
+                  time.split(' ').last,
+                  style: const TextStyle(color: Colors.white, fontSize: 10),
                 ),
               ],
             ),

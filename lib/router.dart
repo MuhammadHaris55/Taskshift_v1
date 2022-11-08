@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taskshift_v1/models/inbox.dart';
 import 'common/widgets/bottom_bar.dart';
 import 'features/auth/auth_screen.dart';
 import 'features/chatapp/screens/chatroom_screen.dart';
@@ -24,7 +25,7 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
       );
 
     case ChatroomScreen.routeName:
-      var receiver = routeSettings.arguments as Map<String, String>;
+      var receiver = routeSettings.arguments as ChatModel;
       return MaterialPageRoute(
         settings: routeSettings,
         builder: (_) => ChatroomScreen(

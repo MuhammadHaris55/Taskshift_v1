@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class ChatModel {
   int? conversationId;
   int? unreadCount;
@@ -47,4 +49,62 @@ class ChatModel {
     return data;
     print(data);
   }
+}
+
+class InboxList {
+  final int conversationId;
+  final int unreadCount;
+  final int userId;
+  final String username;
+  final bool isOnline;
+  final String userimage;
+  final String alphabeticUserImage;
+  final String lastMessage;
+  final String lastMessageDateTime;
+
+  InboxList({
+    required this.conversationId,
+    required this.unreadCount,
+    required this.userId,
+    required this.username,
+    required this.isOnline,
+    required this.userimage,
+    required this.alphabeticUserImage,
+    required this.lastMessage,
+    required this.lastMessageDateTime,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'conversation_id': conversationId,
+      'unread_count': unreadCount,
+      'user_id': userId,
+      'username': username,
+      'isOnline': isOnline,
+      'userimage': userimage,
+      'alphabeticUserImage': alphabeticUserImage,
+      'last_message': lastMessage,
+      'last_message_datetime': lastMessageDateTime,
+    };
+  }
+
+  factory InboxList.fromMap(Map<String, dynamic> map) {
+    return InboxList(
+      conversationId: map['conversation_id']?.toInt() ?? 0,
+      unreadCount: map['unread_count']?.toInt() ?? 0,
+      userId: map['user_id']?.toInt() ?? 0,
+      username: map['username'] ?? '',
+      isOnline: map['isOnline'] ?? false,
+      userimage: map['userimage'] ??
+          'https://profiles.ucr.edu/app/images/default-profile.jpg',
+      alphabeticUserImage: map['alphabeticUserImage'] ?? '',
+      lastMessage: map['last_message'] ?? '',
+      lastMessageDateTime: map['last_message_datetime'] ?? '',
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory InboxList.fromJson(String source) =>
+      InboxList.fromMap(json.decode(source));
 }

@@ -20,6 +20,7 @@ signInBottomModal(
 ) {
   final AuthService authService = AuthService();
   final signInFormKey = GlobalKey<FormState>();
+  bool isLoading = false;
 
   return showModalBottomSheet<void>(
     backgroundColor: Colors.white,
@@ -86,6 +87,7 @@ signInBottomModal(
                             onPressed: () {
                               if (signInFormKey.currentState!.validate()) {
                                 print('Sign In func in IF');
+                                isLoading = true;
                                 authService.userLogin(
                                   context: context,
                                   email: emailController.text.trim(),

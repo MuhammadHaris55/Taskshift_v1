@@ -28,41 +28,43 @@ class AuthService {
     print(
         'name $name -- l_name $lastName --- email $email ----password $password ---- p confirm $passwordConfirmation ---- type $role');
 
-    // Navigator.pushNamed(context, AuthScreen.routeName);
-    Navigator.pop(context);
-    showSnackBar(context, 'Successfully registerated');
-    // try {
-    //   http.Response res = await http.post(
-    //     Uri.parse(Apis.signUp),
-    //     body: jsonEncode({
-    //       "name": name,
-    //       "last_name": lastName,
-    //       "email": email,
-    //       "password": password,
-    //       "password_confirmation": passwordConfirmation,
-    //       "type": role,
-    //     },),
-    //     // user.toJson(),
-    //     headers: <String, String>{
-    //       'Content-Type': 'application/json; charset=UTF-8',
-    //     },
-    //   );
+    try {
+      http.Response res = await http.post(
+        Uri.parse(Apis.signUp),
+        body: jsonEncode(
+          {
+            "name": name,
+            "last_name": lastName,
+            "email": email,
+            "password": password,
+            "password_confirmation": passwordConfirmation,
+            "type": role,
+          },
+        ),
+        // user.toJson(),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
 
-    //   if(jsonDecode(res.body)['success'])
-    //   {
-    //     showSnackBar(
-    //       context,
-    //       'Account created! Verify your email and loged in',
-    //     );
-    //     // showSnackBar(context, jsonDecode(res.body)['response']);
-    //     // showSnackBar(context, 'Verify your email and logged in with the same credential');
-    //   } else {
-    //     showSnackBar(context, jsonDecode(res.body)['response']);
-    //   }
+      print('Sign Up res ---> ${jsonDecode(res.body)}');
 
-    // } catch (e) {
-    //   showSnackBar(context, e.toString());
-    // }
+      if (jsonDecode(res.body)['success']) {
+        Navigator.pop(context);
+        showSnackBar(
+          context,
+          'Account created! Verify your email and loged in',
+        );
+        // showSnackBar(context, jsonDecode(res.body)['response']);
+        // showSnackBar(context, 'Verify your email and logged in with the same credential');
+      } else {
+        Navigator.pop(context);
+        showSnackBar(context, jsonDecode(res.body)['response']);
+      }
+    } catch (e) {
+      Navigator.pop(context);
+      showSnackBar(context, e.toString());
+    }
   }
 
   // sign in user
@@ -79,58 +81,71 @@ class AuthService {
       print('In try');
       http.Response res = await http.post(
         Uri.parse(Apis.login),
-        body: {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
           'email': email,
           'password': password,
-        },
-        // headers: <String, String>{
-        //   // 'Content-Type': 'application/json; charset=UTF-8',
-        //   'Content-Type': 'application/json',
-        // },
+        }),
       );
       print('response ---> ' + jsonDecode(res.body).toString());
       print('response without decode ---> ' +
           jsonEncode(jsonDecode(res.body)['response']));
 
-      httpErrorHandle(
-        response: res,
-        context: context,
-        onSuccess: () async {
-          print('error handling');
-          SharedPreferences prefs = await SharedPreferences.getInstance();
-          Provider.of<UserProvider>(context, listen: false)
-              .setUser(jsonEncode(jsonDecode(res.body)['response']));
-          await prefs.setString('x-auth-token',
-              jsonDecode(res.body)['response']['api_token'].toString());
-          // --------------------------------------------
-          await prefs.setString(
-              'image', jsonDecode(res.body)['response']['image']);
-          await prefs.setStringList('profile', [
-            jsonDecode(res.body)['response']['image'],
-            jsonDecode(res.body)['response']['display_name'],
-            jsonDecode(res.body)['response']['profileviewas'],
-            jsonDecode(res.body)['response']['first_name'],
-            jsonDecode(res.body)['response']['last_name'],
-            jsonDecode(res.body)['response']['email'],
-          ]);
-          // await prefs.setString('email', jsonDecode(res.body)['email']);
-          // await prefs.setString(
-          //     'first_name', jsonDecode(res.body)['first_name']);
-          // await prefs.setString('last_name', jsonDecode(res.body)['last_name']);
-          // await prefs.setString(
-          //     'display_name', jsonDecode(res.body)['display_name']);
-          // await prefs.setString(
-          //     'profileviewas', jsonDecode(res.body)['profileviewas']);
-          // --------------------------------------------
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            BottomBar.routeName,
-            (route) => false,
-          );
-        },
-      );
+      if (jsonDecode(res.body)['success']) {
+        httpErrorHandle(
+          response: res,
+          context: context,
+          onSuccess: () async {
+            print('error handling');
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            Provider.of<UserProvider>(context, listen: false)
+                .setUser(jsonEncode(jsonDecode(res.body)['response']));
+            await prefs.setString('x-auth-token',
+                jsonDecode(res.body)['response']['api_token'].toString());
+            await prefs.setInt(
+                'userId', jsonDecode(res.body)['response']['id']);
+            // --------------------------------------------
+            await prefs.setString(
+              'image',
+              jsonDecode(res.body)['response']['image'] ??
+                  // 'https://imgs.search.brave.com/55eFn53foS1oKYLG96By3dUN27TkYdKvML9821unvy0/rs:fit:705:705:1/g:ce/aHR0cHM6Ly93d3cu/d29ybGRmdXR1cmVj/b3VuY2lsLm9yZy93/cC1jb250ZW50L3Vw/bG9hZHMvMjAyMC8w/Ni9ibGFuay1wcm9m/aWxlLXBpY3R1cmUt/OTczNDYwXzEyODAt/MS03MDV4NzA1LnBu/Zw'
+                  'https://profiles.ucr.edu/app/images/default-profile.jpg',
+            );
+
+            await prefs.setStringList('profile', [
+              jsonDecode(res.body)['response']['image'] ??
+                  'https://profiles.ucr.edu/app/images/default-profile.jpg',
+              // 'https://imgs.search.brave.com/55eFn53foS1oKYLG96By3dUN27TkYdKvML9821unvy0/rs:fit:705:705:1/g:ce/aHR0cHM6Ly93d3cu/d29ybGRmdXR1cmVj/b3VuY2lsLm9yZy93/cC1jb250ZW50L3Vw/bG9hZHMvMjAyMC8w/Ni9ibGFuay1wcm9m/aWxlLXBpY3R1cmUt/OTczNDYwXzEyODAt/MS03MDV4NzA1LnBu/Zw',
+              jsonDecode(res.body)['response']['display_name'],
+              jsonDecode(res.body)['response']['profileviewas'],
+              jsonDecode(res.body)['response']['first_name'],
+              jsonDecode(res.body)['response']['last_name'],
+              jsonDecode(res.body)['response']['email'],
+            ]);
+            // await prefs.setString('email', jsonDecode(res.body)['email']);
+            // await prefs.setString(
+            //     'first_name', jsonDecode(res.body)['first_name']);
+            // await prefs.setString('last_name', jsonDecode(res.body)['last_name']);
+            // await prefs.setString(
+            //     'display_name', jsonDecode(res.body)['display_name']);
+            // await prefs.setString(
+            //     'profileviewas', jsonDecode(res.body)['profileviewas']);
+            // --------------------------------------------
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              BottomBar.routeName,
+              (route) => false,
+            );
+          },
+        );
+      } else {
+        Navigator.pop(context);
+        showSnackBar(context, jsonDecode(res.body)['response']);
+      }
     } catch (e) {
-      print("catch");
+      Navigator.pop(context);
       showSnackBar(context, e.toString());
     }
   }
@@ -143,33 +158,18 @@ class AuthService {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('x-auth-token');
 
-      if (token == null) {
-        prefs.setString('x-auth-token', '');
-      }
+      http.Response userRes = await http.get(
+        Uri.parse(Apis.getUserData),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+      );
 
-      // var tokenRes = await http.post(
-      //   Uri.parse('$uri/tokenIsValid'),
-      //   headers: <String, String>{
-      //     'Content-Type': 'application/json; charset=UTF-8',
-      //     'x-auth-token': token!
-      //   },
-      // );
-
-      // var response = jsonDecode(tokenRes.body);
-
-      if (token != '') {
-        http.Response userRes = await http.get(
-          Uri.parse('$uri/'),
-          headers: <String, String>{
-            'Content-Type': 'application/json; charset=UTF-8',
-            'Authorization': token!
-          },
-        );
-
+      if (jsonDecode(userRes.body)['success'] == true) {
         var userProvider = Provider.of<UserProvider>(context, listen: false);
+        // userProvider.setUser(jsonEncode(jsonDecode(userRes.body)['response']));
         userProvider.setUser(jsonEncode(jsonDecode(userRes.body)['response']));
-      } else {
-        return;
       }
     } catch (e) {
       showSnackBar(context, e.toString());

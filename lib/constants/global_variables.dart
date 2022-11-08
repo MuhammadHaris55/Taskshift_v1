@@ -3,12 +3,24 @@ import 'package:flutter/material.dart';
 String uri = 'https://taskshift.com';
 // String uri = 'http://taskshift.test';
 // String uri = 'http://taskshift.test:30001';
+// String uri = 'http://192.168.100.9:30001'; // For real device
+// String uri = 'http://192.168.100.9:1337';
+// String uri = 'http://192.168.100.9:30001';
+// String uri = 'http://192.168.100.9:3000';
+// String uri = 'http://192.168.100.9:8000';
+// String uri = 'http://192.168.100.9:8080';
+
 const String appFontFamily = 'Nunito';
 
 class Apis {
   static String signUp = '$uri/api/signup';
   static String login = '$uri/api/login';
-  static String getUserData = '$uri/api/authenticated/user';
+  // static String getUserData = '$uri/api/authenticated/user'; // ----previous api
+  static String getUserData = '$uri/api/authenticated/user/mobile';
+  static String getChat = '$uri/api/getchat';
+  static String getMessage = '$uri/api/getmessages';
+  static String sendMessage = '$uri/api/createmessage';
+  static String msgStatusRead = '$uri/api/readstatusmessage';
 }
 
 class AssetImages {

@@ -19,24 +19,24 @@ class profileDetailsRows extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: MediaQuery.of(context).size.width * 0.35,
+            width: MediaQuery.of(context).size.width * 0.30,
             child: Text(
               "$name ",
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 20,
+                fontSize: 16,
               ),
             ),
           ),
           SizedBox(
-            width: MediaQuery.of(context).size.width * 0.50,
+            // width: MediaQuery.of(context).size.width * 0.50,
             child: Text(
               value,
               overflow: TextOverflow.ellipsis,
               maxLines: 2,
               style: const TextStyle(
                 color: AppColors.colorGrey,
-                fontSize: 18,
+                fontSize: 16,
               ),
             ),
           ),

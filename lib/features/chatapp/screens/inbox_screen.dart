@@ -1,5 +1,8 @@
+import 'package:badges/badges.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskshift_v1/common/widgets/custom_text_widget.dart';
 import 'package:taskshift_v1/features/chatapp/screens/chatroom_screen.dart';
 import 'package:taskshift_v1/features/chatapp/services/inbox_servies.dart';
@@ -18,18 +21,45 @@ class InboxScreen extends StatefulWidget {
 }
 
 class _InboxScreenState extends State<InboxScreen> {
-  List<ChatModel>? conversationList = [];
+  List<ChatModel> conversationList = [];
+  String image = 'https://profiles.ucr.edu/app/images/default-profile.jpg';
 
   @override
   void initState() {
     super.initState();
     getConversationList();
+    sharedPrefImage();
   }
 
-  void getConversationList() async {
+  sharedPrefImage() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String prefImage = prefs.getString('image') ?? '';
+    if (prefImage.isNotEmpty) {
+      print(prefImage);
+      image = prefImage;
+    }
+  }
+
+  Future<void> getConversationList() async {
     var responseList = await ChatRemoteService().getConversationListApi();
     if (responseList != null) {
       conversationList = responseList;
+    }
+    setState(() {});
+    Future.delayed(
+      const Duration(seconds: 5),
+      () => getConversationList(),
+    );
+  }
+
+  List<ChatModel> searchresult = [];
+  searchInList(String val) {
+    searchresult = [];
+    if (val.isNotEmpty) {
+      searchresult = conversationList
+          .where((item) =>
+              ((item.username!.toLowerCase().contains(val.toLowerCase()))))
+          .toList();
     }
     setState(() {});
   }
@@ -44,108 +74,216 @@ class _InboxScreenState extends State<InboxScreen> {
         centerTitle: true,
         title: SubtitleText(text: 'Inbox'),
       ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 15.0.w),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                CircleAvatar(
-                  minRadius: 30,
-                  backgroundImage: AssetImage(
-                    ChatMaterial.userDP,
-                  ),
-                  // radius: 30,
-                ),
-                const SizedBox(width: 10.0),
-                Expanded(
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.all(10),
-                      border: const OutlineInputBorder(
-                        borderSide: BorderSide.none,
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(50.0),
-                        ),
-                      ),
-                      focusColor: Colors.grey[600],
-                      focusedBorder: const OutlineInputBorder(
-                        borderSide: BorderSide.none,
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(50.0),
-                        ),
-                      ),
-                      floatingLabelStyle: TextStyle(color: Colors.grey[600]),
-                      filled: true,
-                      prefixIcon: Icon(
-                        Icons.search,
-                        color: Colors.grey[600],
-                      ),
-                      prefixIconColor: Colors.grey[600],
-                      hintStyle: TextStyle(color: Colors.grey[600]),
-                      hintText: "Search",
-                      fillColor: const Color.fromRGBO(112, 112, 112, 0.05),
+      body: GestureDetector(
+        onTap: () {
+          FocusScopeNode currentFocus = FocusScope.of(context);
+          if (!currentFocus.hasPrimaryFocus &&
+              currentFocus.focusedChild != null) {
+            currentFocus.unfocus();
+          }
+        },
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 15.0.w),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  CircleAvatar(
+                    minRadius: 30,
+                    backgroundColor: const Color.fromRGBO(142, 142, 142, 0.5),
+                    backgroundImage: CachedNetworkImageProvider(
+                      image,
                     ),
-                    cursorColor: Colors.grey[600],
+                    // AssetImage(
+                    //   image,
+                    // ),
+                    // radius: 30,
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 5.0),
-            Expanded(
-              child: conversationList != null
-                  ? ListView.builder(
-
-                      /// here we are counting length of list of conversation
-                      itemCount: conversationList!.length,
-                      itemBuilder: (context, index) {
-                        return InkWell(
-                          onTap: () => Navigator.pushNamed(
-                            context,
-                            ChatroomScreen.routeName,
-                            arguments: conversationList![index],
+                  const SizedBox(width: 10.0),
+                  Expanded(
+                    child: TextFormField(
+                      onChanged: (val) => searchInList(val),
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.all(10),
+                        border: const OutlineInputBorder(
+                          borderSide: BorderSide.none,
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(50.0),
                           ),
-                          child: ListTile(
-                            leading: CircleAvatar(
-                              backgroundImage: AssetImage(
-                                // "assets/images/clientimage.png",
-                                conversationList![index].userimage!,
+                        ),
+                        focusColor: Colors.grey[600],
+                        focusedBorder: const OutlineInputBorder(
+                          borderSide: BorderSide.none,
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(50.0),
+                          ),
+                        ),
+                        floatingLabelStyle: TextStyle(color: Colors.grey[600]),
+                        filled: true,
+                        prefixIcon: Icon(
+                          Icons.search,
+                          color: Colors.grey[600],
+                        ),
+                        prefixIconColor: Colors.grey[600],
+                        hintStyle: TextStyle(color: Colors.grey[600]),
+                        hintText: "Search",
+                        fillColor: const Color.fromRGBO(112, 112, 112, 0.05),
+                      ),
+                      cursorColor: Colors.grey[600],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 5.0),
+              searchresult.isNotEmpty
+                  ? Expanded(
+                      child: ListView.builder(
+                          itemCount: searchresult!.length,
+                          itemBuilder: (context, index) {
+                            return InkWell(
+                              onTap: () => Navigator.pushNamed(
+                                context,
+                                ChatroomScreen.routeName,
+                                arguments: searchresult![index],
                               ),
-                              radius: 22.5,
-                            ),
-                            title: Text(
-                              // 'Samad Ilyas',
-                              conversationList![index].username!,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            subtitle: Text(
-                              // 'update me regarding app update me regarding app update me regarding ap p update me regarding app update me regarding app update me regarding app',
-                              conversationList![index].lastMessage!,
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                            ),
-                            trailing: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Text(
-                                  //'10:42 PM'
-                                  conversationList![index].lastMessageDateTime!,
+                              child: ListTile(
+                                leading: CircleAvatar(
+                                  backgroundColor:
+                                      const Color.fromRGBO(142, 142, 142, 0.5),
+                                  backgroundImage: CachedNetworkImageProvider(
+                                    '$uri${searchresult![index].userimage!}',
+                                  ),
+                                  radius: 22.5,
                                 ),
-                                // Badge(
-                                //   badgeColor: const Color.fromRGBO(138, 165, 255, 1),
-                                //   badgeContent: const Text('3'),
-                                // ),
-                              ],
-                            ),
-                          ),
-                        );
-                      })
-                  : const Text("wait...."),
-            ),
-          ],
+                                title: Text(
+                                  searchresult![index].username!,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                subtitle: Text(
+                                  searchresult![index].lastMessage!,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                ),
+                                trailing: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      searchresult![index]
+                                          .lastMessageDateTime!
+                                          .split(' ')
+                                          .last,
+                                    ),
+                                    searchresult[index].unreadCount! > 0
+                                        ? Badge(
+                                            badgeColor: const Color.fromRGBO(
+                                                138, 165, 255, 1),
+                                            badgeContent: const Text('3'),
+                                          )
+                                        : const SizedBox(
+                                            height: 10.0, width: 10.0),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }),
+                    )
+                  : Expanded(
+                      child: RefreshIndicator(
+                        onRefresh: getConversationList,
+                        child: conversationList.isEmpty
+                            ? const Center(child: CircularProgressIndicator())
+                            : ListView.builder(
+
+                                /// here we are counting length of list of conversation
+                                itemCount: conversationList!.length,
+                                itemBuilder: (context, index) {
+                                  return InkWell(
+                                    // onTap: () {
+                                    //   FocusScopeNode currentFocus =
+                                    //       FocusScope.of(context);
+                                    //   // if (!currentFocus.hasPrimaryFocus &&
+                                    //   //     currentFocus.focusedChild != null) {
+                                    //   //   FocusManager.instance.primaryFocus?.unfocus();
+                                    //   // } else {
+                                    //   Navigator.pushNamed(
+                                    //     context,
+                                    //     ChatroomScreen.routeName,
+                                    //     arguments: conversationList![index],
+                                    //   );
+                                    //   // }
+                                    // },
+                                    onTap: () => Navigator.pushNamed(
+                                      context,
+                                      ChatroomScreen.routeName,
+                                      arguments: conversationList![index],
+                                    ),
+                                    child: ListTile(
+                                      leading: CircleAvatar(
+                                        backgroundColor: const Color.fromRGBO(
+                                            142, 142, 142, 0.5),
+                                        backgroundImage:
+                                            CachedNetworkImageProvider(
+                                          '$uri${conversationList![index].userimage!}',
+                                        ),
+                                        //     NetworkImage(
+                                        //   '$uri${conversationList![index].userimage!}',
+                                        // ),
+                                        // AssetImage(
+                                        //   // "assets/images/clientimage.png",
+                                        // ),
+                                        radius: 22.5,
+                                      ),
+                                      title: Text(
+                                        // 'Samad Ilyas',
+                                        conversationList![index].username!,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      subtitle: Text(
+                                        // 'update me regarding app update me regarding app update me regarding ap p update me regarding app update me regarding app update me regarding app',
+                                        conversationList![index].lastMessage!,
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                      ),
+                                      trailing: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [
+                                          Text(
+                                            //'10:42 PM'
+                                            conversationList![index]
+                                                .lastMessageDateTime!
+                                                .split(' ')
+                                                .last,
+                                          ),
+                                          conversationList[index].unreadCount! >
+                                                  0
+                                              ? Badge(
+                                                  badgeColor:
+                                                      const Color.fromRGBO(
+                                                          138, 165, 255, 1),
+                                                  badgeContent: const Text('3'),
+                                                )
+                                              : const SizedBox(
+                                                  height: 10.0, width: 10.0),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                }),
+                      ),
+                    ),
+            ],
+          ),
         ),
       ),
     );

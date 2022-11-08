@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.taskshift_v1">
+    <uses-permission android:name="android.permission.INTERNET"/>
    <application
         android:label="taskshift_v1"
         android:name="${applicationName}"

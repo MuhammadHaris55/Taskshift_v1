@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taskshift_v1/features/auth/services/auth_services.dart';
 import 'package:taskshift_v1/features/chatapp/screens/inbox_screen.dart';
 import 'package:taskshift_v1/features/profile/screens/profile_screen.dart';
 import '../../constants/global_variables.dart';
@@ -13,6 +14,14 @@ class BottomBar extends StatefulWidget {
 
 class _BottomBarState extends State<BottomBar> {
   int _page = 0;
+  final AuthService authService = AuthService();
+
+  @override
+  void initState() {
+    super.initState();
+    print('auth user provider');
+    authService.getUserData(context);
+  }
 
   void updatePage(int page) {
     setState(() {
@@ -23,7 +32,7 @@ class _BottomBarState extends State<BottomBar> {
   List<Widget> pages = [
     const InboxScreen(),
     const ProfileScreen(),
-    const Center(child: Text('Profile Screen')),
+    // const Center(child: Text('Profile Screen')),
   ];
 
   @override
