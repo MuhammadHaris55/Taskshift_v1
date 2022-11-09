@@ -1,5 +1,10 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../../../constants/global_variables.dart';
 
@@ -13,6 +18,40 @@ class SenderChatBubble extends StatelessWidget {
     required this.time,
     this.url,
   }) : super(key: key);
+
+  Future openFile(String imagePath, String fileName) async {
+    final file = await downloadFile(imagePath, fileName);
+    if (file == null) return;
+
+    print('Path: ${file.path}');
+
+    OpenFile.open(file.path);
+  }
+
+  Future<File?> downloadFile(String imagePath, String name) async {
+    final appStorage = await getApplicationDocumentsDirectory();
+    final file = File('${appStorage.path}/$name');
+
+    try {
+      final response = await Dio().get(
+        imagePath,
+        options: Options(
+          responseType: ResponseType.bytes,
+          followRedirects: false,
+          receiveTimeout: 0,
+        ),
+      );
+
+      final raf = file.openSync(mode: FileMode.write);
+      raf.writeFromSync(response.data);
+      await raf.close();
+
+      return file;
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +95,12 @@ class SenderChatBubble extends StatelessWidget {
                     //   )
                     Column(
                         children: [
-                          CachedNetworkImage(imageUrl: image),
+                          GestureDetector(
+                              onTap: () => openFile(
+                                    'https://taskshift.com/storage/conversations/210/3385/H0jiLMabOvJWx2PG3gsWPGI5ipbTC4lcxfjfRqJW.pdf',
+                                    message,
+                                  ),
+                              child: CachedNetworkImage(imageUrl: image)),
                           const SizedBox(height: 10.0),
                         ],
                       )
