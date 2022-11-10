@@ -63,7 +63,8 @@ class User {
       remainingBids: map['remainingBids']?.toInt() ?? 0,
       apiToken: map['api_token'] ?? '',
       profileviewas: map['profileviewas'] ?? '',
-      image: map['image'] ?? '',
+      image: map['image'] ??
+          'https://profiles.ucr.edu/app/images/default-profile.jpg',
       alphabeticImage: map['alphabetic_image'] ?? '',
       identityVerify: map['identity_verify']?.toInt() ?? 0,
       contactVerify: map['contact_verify'] ?? '',

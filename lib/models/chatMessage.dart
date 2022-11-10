@@ -6,6 +6,7 @@ class ChatMessage {
   final String alertTypeMessage;
   final String type;
   final int userid;
+  final bool isOnline;
   final String userRole;
   final String userName;
   final String userimage;
@@ -16,6 +17,7 @@ class ChatMessage {
   final String created;
   // final int? attachment_id;
   final int? attachmentId;
+  final String? attachmentPath;
   final String? url;
   final String? filename;
   final String? extension;
@@ -27,6 +29,7 @@ class ChatMessage {
     this.alertTypeMessage,
     this.type,
     this.userid,
+    this.isOnline,
     this.userRole,
     this.userName,
     this.userimage,
@@ -36,6 +39,7 @@ class ChatMessage {
     this.status,
     this.created,
     this.attachmentId,
+    this.attachmentPath,
     this.url,
     this.filename,
     this.extension,
@@ -49,6 +53,7 @@ class ChatMessage {
       'alert_type_message': alertTypeMessage,
       'type': type,
       'userid': userid,
+      'isOnline': isOnline,
       'user_role': userRole,
       'user_name': userName,
       'userimage': userimage,
@@ -58,6 +63,7 @@ class ChatMessage {
       'status': status,
       'created': created,
       'attachment_id': attachmentId,
+      'attachment_path': attachmentPath,
       'url': url,
       'filename': filename,
       'extension': extension,
@@ -72,6 +78,7 @@ class ChatMessage {
       map['alert_type_message'] ?? '',
       map['type'] ?? '',
       map['userid']?.toInt() ?? 0,
+      map['isOnline'] ?? '',
       map['user_role'] ?? '',
       map['user_name'] ?? '',
       map['userimage'] ?? '',
@@ -81,6 +88,7 @@ class ChatMessage {
       map['status'] ?? '',
       map['created'] ?? '',
       map['attachment_id']?.toInt() ?? 0,
+      map['attachment_path'] ?? '',
       map['url'] ?? '',
       map['filename'] ?? '',
       map['extension'] ?? '',

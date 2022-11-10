@@ -12,15 +12,19 @@ class SenderChatBubble extends StatelessWidget {
   String message;
   String time;
   String? url;
+  String? attachmentPath;
   SenderChatBubble({
     Key? key,
     required this.message,
     required this.time,
     this.url,
+    this.attachmentPath,
   }) : super(key: key);
 
   Future openFile(String imagePath, String fileName) async {
-    final file = await downloadFile(imagePath, fileName);
+    // final file = await downloadFile(imagePath, fileName);
+    print('imagepath -- > $attachmentPath');
+    final file = await downloadFile(attachmentPath!.toString(), fileName);
     if (file == null) return;
 
     print('Path: ${file.path}');

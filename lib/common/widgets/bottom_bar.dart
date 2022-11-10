@@ -1,6 +1,8 @@
+import 'package:cron/cron.dart';
 import 'package:flutter/material.dart';
 import 'package:taskshift_v1/features/auth/services/auth_services.dart';
 import 'package:taskshift_v1/features/chatapp/screens/inbox_screen.dart';
+import 'package:taskshift_v1/features/chatapp/services/inbox_servies.dart';
 import 'package:taskshift_v1/features/profile/screens/profile_screen.dart';
 import '../../constants/global_variables.dart';
 
@@ -15,12 +17,20 @@ class BottomBar extends StatefulWidget {
 class _BottomBarState extends State<BottomBar> {
   int _page = 0;
   final AuthService authService = AuthService();
+  final ChatRemoteService chatRemoteService = ChatRemoteService();
+  final cron = Cron();
 
   @override
   void initState() {
     super.initState();
-    print('auth user provider');
+    cronFunc();
     authService.getUserData(context);
+  }
+
+  cronFunc() {
+    cron.schedule(Schedule.parse('* * * * *'), () {
+      chatRemoteService.maintainOnlineStatus(context);
+    });
   }
 
   void updatePage(int page) {

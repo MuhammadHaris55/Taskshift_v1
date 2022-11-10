@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+import 'package:cron/cron.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskshift_v1/constants/global_variables.dart';
@@ -138,5 +140,23 @@ class ChatRemoteService {
     print('file reason pharase --> ${res.reasonPhrase}');
     showSnackBar(context, 'error ${res.reasonPhrase}');
     // return res.reasonPhrase;
+  }
+
+  Future<void> maintainOnlineStatus(BuildContext context) async {
+    try {
+      print('API hit to maintain online status');
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      String token = prefs.getString('x-auth-token') ?? '';
+
+      await http.post(
+        Uri.parse(Apis.maintainOnlineStatus),
+        headers: {
+          'Authorization': "Bearer $token",
+          'Content-Type': "application/json",
+        },
+      );
+    } catch (e) {
+      showSnackBar(context, e.toString());
+    }
   }
 }

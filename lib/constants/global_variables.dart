@@ -15,12 +15,14 @@ const String appFontFamily = 'Nunito';
 class Apis {
   static String signUp = '$uri/api/signup';
   static String login = '$uri/api/login';
+  static String googleLogin = '$uri/api/login/google/callback';
   // static String getUserData = '$uri/api/authenticated/user'; // ----previous api
   static String getUserData = '$uri/api/authenticated/user/mobile';
   static String getChat = '$uri/api/getchat';
   static String getMessage = '$uri/api/getmessages';
   static String sendMessage = '$uri/api/createmessage';
   static String msgStatusRead = '$uri/api/readstatusmessage';
+  static String maintainOnlineStatus = '$uri/api/set-user-online';
 }
 
 class AssetImages {

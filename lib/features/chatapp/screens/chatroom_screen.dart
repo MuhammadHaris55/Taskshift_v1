@@ -30,7 +30,7 @@ class ChatroomScreen extends StatefulWidget {
 }
 
 class _ChatroomScreenState extends State<ChatroomScreen> {
-  List<ChatMessage>? conversationList = [];
+  List<ChatMessage> conversationList = [];
   late SharedPreferences prefs;
   late int userId;
   bool disposeFunc = false;
@@ -181,14 +181,19 @@ class _ChatroomScreenState extends State<ChatroomScreen> {
                       fontSize: 18.0,
                     ),
                   ),
-                  // Text(
-                  //   widget.receiver.isOnline! ? 'Online' : 'Offline',
-                  //   style: const TextStyle(
-                  //     color: Colors.black,
-                  //     fontSize: 12.0,
-                  //     fontFamily: appFontFamily,
-                  //   ),
-                  // ),
+                  Text(
+                    // widget.receiver.isOnline! ? 'Online' : 'Offline',
+                    conversationList.isEmpty || conversationList == []
+                        ? 'Offline'
+                        : conversationList!.first.isOnline
+                            ? 'Online'
+                            : 'Offline',
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 12.0,
+                      fontFamily: appFontFamily,
+                    ),
+                  ),
                 ],
               ),
             ],
@@ -215,6 +220,8 @@ class _ChatroomScreenState extends State<ChatroomScreen> {
                               message: conversationList![index].message,
                               time: conversationList![index].created,
                               url: conversationList![index].url,
+                              attachmentPath:
+                                  conversationList![index].attachmentPath,
                               // message: ChatMaterial.messagesList[index]['msg']!,
                             )
                           : ReceiverChatBubble(
