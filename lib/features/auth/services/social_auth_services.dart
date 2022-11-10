@@ -1,0 +1,69 @@
+import 'dart:convert';
+
+import 'package:flutter/cupertino.dart';
+import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../../common/widgets/bottom_bar.dart';
+import '../../../constants/error_handling.dart';
+import '../../../constants/global_variables.dart';
+import '../../../constants/utils.dart';
+import '../../../providers/user_provider.dart';
+
+class SocialAuthServices {
+  void googleLogin({
+    required BuildContext context,
+    required String providerId,
+    required String fullName,
+    required String email,
+  }) async {
+    try {
+      print('In try --- $fullName --- $email ---- $providerId' + providerId);
+      http.Response res = await http.post(
+        Uri.parse(Apis.googleLogin),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          "providerId": providerId,
+          "email": email,
+          "fullName": fullName,
+        }),
+      );
+      print('response ---> ' + jsonDecode(res.body).toString());
+
+      httpErrorHandle(
+        response: res,
+        context: context,
+        onSuccess: () async {
+          print('error handling');
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          Provider.of<UserProvider>(context, listen: false)
+              .setUser(jsonEncode(jsonDecode(res.body)['response']));
+          await prefs.setString('x-auth-token',
+              jsonDecode(res.body)['response']['api_token'].toString());
+          // --------------------------------------------
+          await prefs.setString(
+              'image', jsonDecode(res.body)['response']['image']);
+          await prefs.setStringList('profile', [
+            jsonDecode(res.body)['response']['image'],
+            jsonDecode(res.body)['response']['display_name'],
+            jsonDecode(res.body)['response']['profileviewas'],
+            jsonDecode(res.body)['response']['first_name'],
+            jsonDecode(res.body)['response']['last_name'],
+            jsonDecode(res.body)['response']['email'],
+          ]);
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            BottomBar.routeName,
+            (route) => false,
+          );
+        },
+      );
+    } catch (e) {
+      print("catch");
+      showSnackBar(context, e.toString());
+    }
+  }
+}
