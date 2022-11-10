@@ -1,9 +1,53 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:taskshift_v1/constants/global_variables.dart';
+import 'package:taskshift_v1/features/auth/services/social_auth_services.dart';
 
-class SocialMediaLoginRow extends StatelessWidget {
+class SocialMediaLoginRow extends StatefulWidget {
   const SocialMediaLoginRow({super.key});
+
+  @override
+  State<SocialMediaLoginRow> createState() => _SocialMediaLoginRowState();
+}
+
+class _SocialMediaLoginRowState extends State<SocialMediaLoginRow> {
+  final GoogleSignIn _googlesignin = GoogleSignIn(scopes: ['email']);
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final SocialAuthServices socialAuthServices = SocialAuthServices();
+
+  GoogleSignInAccount? _currentUser;
+
+  // @override
+  Future<void> signIn(BuildContext context) async {
+    try {
+      GoogleSignInAccount? googleSignInAccount = await _googlesignin.signIn();
+
+      GoogleSignInAuthentication googleSignInAuthentication =
+          await googleSignInAccount!.authentication;
+
+      AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleSignInAuthentication.accessToken,
+        idToken: googleSignInAuthentication.idToken,
+      );
+
+      var authResult = await _auth.signInWithCredential(credential);
+
+      var profileData = authResult.additionalUserInfo;
+      if (profileData != null) {
+        socialAuthServices.googleLogin(
+          context: context,
+          email: profileData.profile!['email'],
+          providerId: profileData.profile!['sub'],
+          fullName: profileData.profile!['name'],
+        );
+      }
+      
+    } catch (e) {
+      print('ERROR SIGNING IN $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +56,9 @@ class SocialMediaLoginRow extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         InkWell(
-          onTap: () {},
+          onTap: () {
+            signIn(context);
+          },
           child: CircleAvatar(
             backgroundColor: Colors.transparent,
             backgroundImage: AssetImage(
