@@ -27,6 +27,7 @@ class SocialAuthServices {
       GoogleSignInAuthentication googleSignInAuthentication =
           await googleSignInAccount!.authentication;
 
+      print("auth cred ---> ${googleSignInAuthentication.toString()}");
       AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleSignInAuthentication.accessToken,
         idToken: googleSignInAuthentication.idToken,
@@ -83,9 +84,17 @@ class SocialAuthServices {
               jsonDecode(res.body)['response']['api_token'].toString());
           // --------------------------------------------
           await prefs.setString(
-              'image', jsonDecode(res.body)['response']['image']);
+            'image',
+            jsonDecode(res.body)['response']['image'] == null ||
+                    jsonDecode(res.body)['response']['image'] == ''
+                ? 'https://profiles.ucr.edu/app/images/default-profile.jpg'
+                : '$uri${jsonDecode(res.body)['response']['image']}',
+          );
           await prefs.setStringList('profile', [
-            jsonDecode(res.body)['response']['image'],
+            jsonDecode(res.body)['response']['image'] == null ||
+                    jsonDecode(res.body)['response']['image'] == ''
+                ? 'https://profiles.ucr.edu/app/images/default-profile.jpg'
+                : '$uri${jsonDecode(res.body)['response']['image']}',
             jsonDecode(res.body)['response']['display_name'],
             jsonDecode(res.body)['response']['profileviewas'],
             jsonDecode(res.body)['response']['first_name'],

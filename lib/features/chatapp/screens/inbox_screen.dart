@@ -24,6 +24,7 @@ class _InboxScreenState extends State<InboxScreen> {
   List<ChatModel> conversationList = [];
   String image = 'https://profiles.ucr.edu/app/images/default-profile.jpg';
   bool loadingChat = false;
+  final ChatRemoteService chatRemoteService = ChatRemoteService();
 
   @override
   void initState() {
@@ -43,12 +44,12 @@ class _InboxScreenState extends State<InboxScreen> {
 
   Future<void> getConversationList() async {
     loadingChat = true;
-    var responseList = await ChatRemoteService().getConversationListApi();
+    var responseList = await chatRemoteService.getConversationListApi();
     if (responseList != null) {
       conversationList = responseList;
+      loadingChat = false;
+      setState(() {});
     }
-    loadingChat = false;
-    setState(() {});
     Future.delayed(
       const Duration(seconds: 5),
       () => getConversationList(),

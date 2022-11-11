@@ -96,7 +96,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     const SizedBox(height: 5.0),
                     Text(
-                      profile.isNotEmpty ? profile[2] : '',
+                      profile.isNotEmpty
+                          ? profile[2] == 'employer'
+                              ? 'Freelancer'
+                              : profile[2]
+                          : '',
                       // user.profileviewas,
                       style: const TextStyle(
                         color: AppColors.colorGrey,

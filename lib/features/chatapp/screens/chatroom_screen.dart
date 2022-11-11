@@ -71,37 +71,44 @@ class _ChatroomScreenState extends State<ChatroomScreen> {
 
   void sendMessage() {
     if (messageController.text.trim().isNotEmpty) {
-      print(messageController.text.trim());
+      String msg = messageController.text.trim();
+      messageController.clear();
+      print(msg);
       ChatRemoteService().sendMessage(
         userId,
         conversationList![0].clientid,
         widget.receiver.conversationId!.toInt(),
-        messageController.text.trim(),
+        msg,
       );
 
       ChatMessage msgObj = ChatMessage.fromJson(
         jsonEncode({
           "mid": 0,
-          "message": messageController.text.trim(),
+          "message": msg,
           "alert_type_message": "",
           "type": "message",
           "userid": userId,
+          "isOnline": true,
           "user_role": "user",
-          "user_name": "chelseaelliot",
-          "userimage":
-              "/storage/users/393/profile/display_picture/WDLLZl7cK8vq8rGQe8GD9oMTLhx1BO1Ah7bSBNSH.png",
-          "userimage_url":
-              "https://taskshift.com/storage/users/393/profile/display_picture/WDLLZl7cK8vq8rGQe8GD9oMTLhx1BO1Ah7bSBNSH.png",
+          "user_name": widget.receiver.username ?? '',
+          "userimage": '$uri${widget.receiver.userimage}',
+          "userimage_url": '$uri${widget.receiver.userimage}',
           "alphabeticUserImage": "C",
           "clientid": conversationList![0].clientid,
           "status": "un_read",
-          "created": ""
+          "created": "",
+          "attachment_id": null,
+          "attachment_path": null,
+          "url": null,
+          "filename": null,
+          "extension": null,
+          "size": null
         }),
       );
       conversationList!.insert(0, msgObj);
       messageController.clear();
-      getMessageList();
       setState(() {});
+      getMessageList();
     }
   }
 
@@ -247,6 +254,8 @@ class _ChatroomScreenState extends State<ChatroomScreen> {
                                     message: conversationList![index].message,
                                     time: conversationList![index].created,
                                     url: conversationList![index].url,
+                                    attachmentPath:
+                                        conversationList![index].attachmentPath,
                                   ),
                           ],
                         ),

@@ -100,11 +100,19 @@ class SenderChatBubble extends StatelessWidget {
                     Column(
                         children: [
                           GestureDetector(
-                              onTap: () => openFile(
-                                    'https://taskshift.com/storage/conversations/210/3385/H0jiLMabOvJWx2PG3gsWPGI5ipbTC4lcxfjfRqJW.pdf',
-                                    message,
-                                  ),
-                              child: CachedNetworkImage(imageUrl: image)),
+                            onTap: () => openFile(
+                              'https://taskshift.com/storage/conversations/210/3385/H0jiLMabOvJWx2PG3gsWPGI5ipbTC4lcxfjfRqJW.pdf',
+                              message,
+                            ),
+                            child:
+                                // Image(
+                                //     image: NetworkImage(
+                                //         '${image.split('com/').first}/${image.split('com/').last}'
+                                //         // image,
+                                //         )),
+                                // Image.network(image),
+                                CachedNetworkImage(imageUrl: image),
+                          ),
                           const SizedBox(height: 10.0),
                         ],
                       )

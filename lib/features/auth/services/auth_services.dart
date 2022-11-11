@@ -109,15 +109,19 @@ class AuthService {
             // --------------------------------------------
             await prefs.setString(
               'image',
-              jsonDecode(res.body)['response']['image'] ??
+              jsonDecode(res.body)['response']['image'] != null ||
+                      jsonDecode(res.body)['response']['image'] != ''
+                  ? '$uri${jsonDecode(res.body)['response']['image']}'
+                  :
                   // 'https://imgs.search.brave.com/55eFn53foS1oKYLG96By3dUN27TkYdKvML9821unvy0/rs:fit:705:705:1/g:ce/aHR0cHM6Ly93d3cu/d29ybGRmdXR1cmVj/b3VuY2lsLm9yZy93/cC1jb250ZW50L3Vw/bG9hZHMvMjAyMC8w/Ni9ibGFuay1wcm9m/aWxlLXBpY3R1cmUt/OTczNDYwXzEyODAt/MS03MDV4NzA1LnBu/Zw'
                   'https://profiles.ucr.edu/app/images/default-profile.jpg',
             );
 
             await prefs.setStringList('profile', [
-              jsonDecode(res.body)['response']['image'] ??
-                  'https://profiles.ucr.edu/app/images/default-profile.jpg',
-              // 'https://imgs.search.brave.com/55eFn53foS1oKYLG96By3dUN27TkYdKvML9821unvy0/rs:fit:705:705:1/g:ce/aHR0cHM6Ly93d3cu/d29ybGRmdXR1cmVj/b3VuY2lsLm9yZy93/cC1jb250ZW50L3Vw/bG9hZHMvMjAyMC8w/Ni9ibGFuay1wcm9m/aWxlLXBpY3R1cmUt/OTczNDYwXzEyODAt/MS03MDV4NzA1LnBu/Zw',
+              jsonDecode(res.body)['response']['image'] != null ||
+                      jsonDecode(res.body)['response']['image'] != ''
+                  ? '$uri${jsonDecode(res.body)['response']['image']}'
+                  : 'https://profiles.ucr.edu/app/images/default-profile.jpg',
               jsonDecode(res.body)['response']['display_name'],
               jsonDecode(res.body)['response']['profileviewas'],
               jsonDecode(res.body)['response']['first_name'],

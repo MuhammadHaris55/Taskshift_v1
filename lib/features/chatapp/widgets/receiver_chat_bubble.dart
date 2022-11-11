@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:taskshift_v1/constants/utils.dart';
 
 import '../../../constants/global_variables.dart';
 
@@ -13,16 +14,19 @@ class ReceiverChatBubble extends StatelessWidget {
   String message;
   String time;
   String? url;
+  String? attachmentPath;
   ReceiverChatBubble({
     Key? key,
     required this.image,
     required this.message,
     required this.time,
     this.url,
+    this.attachmentPath,
   }) : super(key: key);
 
   Future openFile(String imagePath, String fileName) async {
-    final file = await downloadFile(imagePath, fileName);
+    // final file = await downloadFile(imagePath, fileName);
+    final file = await downloadFile(attachmentPath!.toString(), fileName);
     if (file == null) return;
 
     print('Path: ${file.path}');
@@ -57,11 +61,11 @@ class ReceiverChatBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String image = '';
+    String fileImage = '';
     if (url != '') {
       var imageSplit = url!.split('src=').last.split('>').first.toString();
-      image = imageSplit.split('"').elementAt(1);
-      print('image ---> $image');
+      fileImage = imageSplit.split('"').elementAt(1);
+      print('image ---> $fileImage');
     }
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -106,7 +110,7 @@ class ReceiverChatBubble extends StatelessWidget {
                                     'https://taskshift.com/storage/conversations/210/3385/H0jiLMabOvJWx2PG3gsWPGI5ipbTC4lcxfjfRqJW.pdf',
                                     message,
                                   ),
-                              child: CachedNetworkImage(imageUrl: image)),
+                              child: CachedNetworkImage(imageUrl: fileImage)),
                           const SizedBox(height: 10.0),
                         ],
                       )

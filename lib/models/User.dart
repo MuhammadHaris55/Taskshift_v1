@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:taskshift_v1/constants/global_variables.dart';
+
 class User {
   final int id;
   final String firstName;
@@ -63,8 +65,9 @@ class User {
       remainingBids: map['remainingBids']?.toInt() ?? 0,
       apiToken: map['api_token'] ?? '',
       profileviewas: map['profileviewas'] ?? '',
-      image: map['image'] ??
-          'https://profiles.ucr.edu/app/images/default-profile.jpg',
+      image: map['image'] != null || map['image'] != ''
+          ? '$uri${map['image']}'
+          : 'https://profiles.ucr.edu/app/images/default-profile.jpg',
       alphabeticImage: map['alphabetic_image'] ?? '',
       identityVerify: map['identity_verify']?.toInt() ?? 0,
       contactVerify: map['contact_verify'] ?? '',
