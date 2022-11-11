@@ -13,41 +13,41 @@ class SocialMediaLoginRow extends StatefulWidget {
 }
 
 class _SocialMediaLoginRowState extends State<SocialMediaLoginRow> {
-  final GoogleSignIn _googlesignin = GoogleSignIn(scopes: ['email']);
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   final SocialAuthServices socialAuthServices = SocialAuthServices();
+  // final GoogleSignIn _googlesignin = GoogleSignIn(scopes: ['email']);
+  // final FirebaseAuth _auth = FirebaseAuth.instance;
+  // final SocialAuthServices socialAuthServices = SocialAuthServices();
 
-  GoogleSignInAccount? _currentUser;
+  // GoogleSignInAccount? _currentUser;
 
-  // @override
-  Future<void> signIn(BuildContext context) async {
-    try {
-      GoogleSignInAccount? googleSignInAccount = await _googlesignin.signIn();
+  // // @override
+  // Future<void> signIn(BuildContext context) async {
+  //   try {
+  //     GoogleSignInAccount? googleSignInAccount = await _googlesignin.signIn();
 
-      GoogleSignInAuthentication googleSignInAuthentication =
-          await googleSignInAccount!.authentication;
+  //     GoogleSignInAuthentication googleSignInAuthentication =
+  //         await googleSignInAccount!.authentication;
 
-      AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleSignInAuthentication.accessToken,
-        idToken: googleSignInAuthentication.idToken,
-      );
+  //     AuthCredential credential = GoogleAuthProvider.credential(
+  //       accessToken: googleSignInAuthentication.accessToken,
+  //       idToken: googleSignInAuthentication.idToken,
+  //     );
 
-      var authResult = await _auth.signInWithCredential(credential);
+  //     var authResult = await _auth.signInWithCredential(credential);
 
-      var profileData = authResult.additionalUserInfo;
-      if (profileData != null) {
-        socialAuthServices.googleLogin(
-          context: context,
-          email: profileData.profile!['email'],
-          providerId: profileData.profile!['sub'],
-          fullName: profileData.profile!['name'],
-        );
-      }
-      
-    } catch (e) {
-      print('ERROR SIGNING IN $e');
-    }
-  }
+  //     var profileData = authResult.additionalUserInfo;
+  //     if (profileData != null) {
+  //       socialAuthServices.googleLogin(
+  //         context: context,
+  //         email: profileData.profile!['email'],
+  //         providerId: profileData.profile!['sub'],
+  //         fullName: profileData.profile!['name'],
+  //       );
+  //     }
+  //   } catch (e) {
+  //     print('ERROR SIGNING IN $e');
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +57,8 @@ class _SocialMediaLoginRowState extends State<SocialMediaLoginRow> {
       children: [
         InkWell(
           onTap: () {
-            signIn(context);
+            socialAuthServices.signIn(context);
+            // signIn(context);
           },
           child: CircleAvatar(
             backgroundColor: Colors.transparent,

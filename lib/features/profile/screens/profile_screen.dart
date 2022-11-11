@@ -69,7 +69,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
                     CircleAvatar(
                       // backgroundImage: AssetImage(AssetImages.userDP),
-                      // backgroundColor: const Color.fromRGBO(142, 142, 142, 0.5),
+                      backgroundColor: const Color.fromRGBO(142, 142, 142, 0.5),
                       backgroundImage: CachedNetworkImageProvider(
                         // user.image,
                         profile[0].isNotEmpty

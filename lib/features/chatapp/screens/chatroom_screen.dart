@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskshift_v1/common/widgets/bottom_bar.dart';
+import 'package:taskshift_v1/features/chatapp/services/chat_services.dart';
 import 'package:taskshift_v1/features/chatapp/widgets/receiver_chat_bubble.dart';
 import 'package:taskshift_v1/features/chatapp/widgets/sender_chat_bubble.dart';
 import 'package:taskshift_v1/models/chatMessage.dart';
@@ -37,6 +38,8 @@ class _ChatroomScreenState extends State<ChatroomScreen> {
   PlatformFile? pickedFile;
 
   final TextEditingController messageController = TextEditingController();
+  final ChatServices chatServices = ChatServices();
+  bool? isOnline;
 
   @override
   void initState() {
@@ -55,8 +58,14 @@ class _ChatroomScreenState extends State<ChatroomScreen> {
       print('messageList ---> $conversationList');
     }
     setState(() {});
+    bool? onlineBool = await chatServices
+        .getOnlineStatus(widget.receiver.conversationId!.toInt());
+    if (onlineBool != null) {
+      isOnline = onlineBool;
+      setState(() {});
+    }
     if (disposeFunc == false) {
-      Future.delayed(const Duration(seconds: 3), () => {getMessageList()});
+      Future.delayed(const Duration(seconds: 1), () => {getMessageList()});
     }
   }
 
@@ -183,9 +192,14 @@ class _ChatroomScreenState extends State<ChatroomScreen> {
                   ),
                   Text(
                     // widget.receiver.isOnline! ? 'Online' : 'Offline',
-                    conversationList.isEmpty || conversationList == []
-                        ? 'Offline'
-                        : conversationList!.first.isOnline
+                    // conversationList.isEmpty || conversationList == []
+                    //     ? 'Offline'
+                    //     : conversationList!.first.isOnline
+                    //         ? 'Online'
+                    //         : 'Offline',
+                    isOnline == null
+                        ? ''
+                        : isOnline!
                             ? 'Online'
                             : 'Offline',
                     style: const TextStyle(
@@ -202,38 +216,42 @@ class _ChatroomScreenState extends State<ChatroomScreen> {
         body: Column(
           children: [
             Expanded(
-              child: ListView.builder(
-                reverse: true,
-                // itemCount: ChatMaterial.messagesList.length,
-                itemCount: conversationList!.length,
-                itemBuilder: (context, index) => Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 10.0, vertical: 10.0),
-                  child: Column(
-                    children: [
-                      // ReceiverChatBubble(
-                      //   image: conversationList![index].userimageUrl,
-                      //   message: conversationList![index].message,
-                      // ),
-                      conversationList![index].userid == userId
-                          ? SenderChatBubble(
-                              message: conversationList![index].message,
-                              time: conversationList![index].created,
-                              url: conversationList![index].url,
-                              attachmentPath:
-                                  conversationList![index].attachmentPath,
-                              // message: ChatMaterial.messagesList[index]['msg']!,
-                            )
-                          : ReceiverChatBubble(
-                              image: widget.receiver.userimage!,
-                              message: conversationList![index].message,
-                              time: conversationList![index].created,
-                              url: conversationList![index].url,
-                            ),
-                    ],
-                  ),
-                ),
-              ),
+              child: conversationList.isEmpty
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : ListView.builder(
+                      reverse: true,
+                      // itemCount: ChatMaterial.messagesList.length,
+                      itemCount: conversationList!.length,
+                      itemBuilder: (context, index) => Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10.0, vertical: 10.0),
+                        child: Column(
+                          children: [
+                            // ReceiverChatBubble(
+                            //   image: conversationList![index].userimageUrl,
+                            //   message: conversationList![index].message,
+                            // ),
+                            conversationList![index].userid == userId
+                                ? SenderChatBubble(
+                                    message: conversationList![index].message,
+                                    time: conversationList![index].created,
+                                    url: conversationList![index].url,
+                                    attachmentPath:
+                                        conversationList![index].attachmentPath,
+                                    // message: ChatMaterial.messagesList[index]['msg']!,
+                                  )
+                                : ReceiverChatBubble(
+                                    image: widget.receiver.userimage!,
+                                    message: conversationList![index].message,
+                                    time: conversationList![index].created,
+                                    url: conversationList![index].url,
+                                  ),
+                          ],
+                        ),
+                      ),
+                    ),
             ),
             // SizedBox(
             //   child: Text(pickedFile!.name),

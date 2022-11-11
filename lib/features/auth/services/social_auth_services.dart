@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,6 +14,42 @@ import '../../../constants/utils.dart';
 import '../../../providers/user_provider.dart';
 
 class SocialAuthServices {
+  final GoogleSignIn _googlesignin = GoogleSignIn(scopes: ['email']);
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  GoogleSignInAccount? _currentUser;
+
+  // @override
+  Future<void> signIn(BuildContext context) async {
+    try {
+      GoogleSignInAccount? googleSignInAccount = await _googlesignin.signIn();
+
+      GoogleSignInAuthentication googleSignInAuthentication =
+          await googleSignInAccount!.authentication;
+
+      AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleSignInAuthentication.accessToken,
+        idToken: googleSignInAuthentication.idToken,
+      );
+
+      var authResult = await _auth.signInWithCredential(credential);
+
+      var profileData = authResult.additionalUserInfo;
+      if (profileData != null) {
+        googleLogin(
+          context: context,
+          email: profileData.profile!['email'],
+          providerId: profileData.profile!['sub'],
+          fullName: profileData.profile!['name'],
+        );
+      }
+    } catch (e) {
+      print('ERROR SIGNING IN $e');
+      Navigator.pop(context);
+      showSnackBar(context, 'Server issue');
+    }
+  }
+
   void googleLogin({
     required BuildContext context,
     required String providerId,

@@ -23,6 +23,7 @@ class Apis {
   static String sendMessage = '$uri/api/createmessage';
   static String msgStatusRead = '$uri/api/readstatusmessage';
   static String maintainOnlineStatus = '$uri/api/set-user-online';
+  static String getReceiverOnlineStatus = '$uri/api/conversation/';
 }
 
 class AssetImages {

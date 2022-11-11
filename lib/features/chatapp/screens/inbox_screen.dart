@@ -23,6 +23,7 @@ class InboxScreen extends StatefulWidget {
 class _InboxScreenState extends State<InboxScreen> {
   List<ChatModel> conversationList = [];
   String image = 'https://profiles.ucr.edu/app/images/default-profile.jpg';
+  bool loadingChat = false;
 
   @override
   void initState() {
@@ -41,10 +42,12 @@ class _InboxScreenState extends State<InboxScreen> {
   }
 
   Future<void> getConversationList() async {
+    loadingChat = true;
     var responseList = await ChatRemoteService().getConversationListApi();
     if (responseList != null) {
       conversationList = responseList;
     }
+    loadingChat = false;
     setState(() {});
     Future.delayed(
       const Duration(seconds: 5),
@@ -196,7 +199,10 @@ class _InboxScreenState extends State<InboxScreen> {
                       child: RefreshIndicator(
                         onRefresh: getConversationList,
                         child: conversationList.isEmpty
-                            ? const Center(child: CircularProgressIndicator())
+                            ? Center(
+                                child: loadingChat
+                                    ? const CircularProgressIndicator()
+                                    : const Text('Don\'t have chat yet'))
                             : ListView.builder(
 
                                 /// here we are counting length of list of conversation
