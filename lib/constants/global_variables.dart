@@ -16,6 +16,7 @@ class Apis {
   static String signUp = '$uri/api/signup';
   static String login = '$uri/api/login';
   static String googleLogin = '$uri/api/login/google/callback';
+  static String linkedinLogin = '$uri/api/login/linkedin/callback';
   // static String getUserData = '$uri/api/authenticated/user'; // ----previous api
   static String getUserData = '$uri/api/authenticated/user/mobile';
   static String getChat = '$uri/api/getchat';
