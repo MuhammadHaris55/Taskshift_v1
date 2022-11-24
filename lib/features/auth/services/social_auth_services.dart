@@ -72,44 +72,52 @@ class SocialAuthServices {
       );
       print('response ---> ' + jsonDecode(res.body).toString());
 
-      httpErrorHandle(
-        response: res,
-        context: context,
-        onSuccess: () async {
-          print('error handling');
-          SharedPreferences prefs = await SharedPreferences.getInstance();
-          Provider.of<UserProvider>(context, listen: false)
-              .setUser(jsonEncode(jsonDecode(res.body)['response']));
-          await prefs.setString('x-auth-token',
-              jsonDecode(res.body)['response']['api_token'].toString());
-          // --------------------------------------------
-          await prefs.setString(
-            'image',
-            jsonDecode(res.body)['response']['image'] == null ||
-                    jsonDecode(res.body)['response']['image'] == ''
-                ? 'https://profiles.ucr.edu/app/images/default-profile.jpg'
-                : '$uri${jsonDecode(res.body)['response']['image']}',
-          );
-          await prefs.setStringList('profile', [
-            jsonDecode(res.body)['response']['image'] == null ||
-                    jsonDecode(res.body)['response']['image'] == ''
-                ? 'https://profiles.ucr.edu/app/images/default-profile.jpg'
-                : '$uri${jsonDecode(res.body)['response']['image']}',
-            jsonDecode(res.body)['response']['display_name'],
-            jsonDecode(res.body)['response']['profileviewas'],
-            jsonDecode(res.body)['response']['first_name'],
-            jsonDecode(res.body)['response']['last_name'],
-            jsonDecode(res.body)['response']['email'],
-          ]);
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            BottomBar.routeName,
-            (route) => false,
-          );
-        },
-      );
+      if (jsonDecode(res.body)['success']) {
+        httpErrorHandle(
+          response: res,
+          context: context,
+          onSuccess: () async {
+            print('error handling');
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            Provider.of<UserProvider>(context, listen: false)
+                .setUser(jsonEncode(jsonDecode(res.body)['response']));
+            await prefs.setString('x-auth-token',
+                jsonDecode(res.body)['response']['api_token'].toString());
+            await prefs.setInt(
+                'userId', jsonDecode(res.body)['response']['id']);
+            // --------------------------------------------
+            await prefs.setString(
+              'image',
+              jsonDecode(res.body)['response']['image'] == null ||
+                      jsonDecode(res.body)['response']['image'] == ''
+                  ? 'https://profiles.ucr.edu/app/images/default-profile.jpg'
+                  : '$uri${jsonDecode(res.body)['response']['image']}',
+            );
+            await prefs.setStringList('profile', [
+              jsonDecode(res.body)['response']['image'] == null ||
+                      jsonDecode(res.body)['response']['image'] == ''
+                  ? 'https://profiles.ucr.edu/app/images/default-profile.jpg'
+                  : '$uri${jsonDecode(res.body)['response']['image']}',
+              jsonDecode(res.body)['response']['display_name'],
+              jsonDecode(res.body)['response']['profileviewas'],
+              jsonDecode(res.body)['response']['first_name'],
+              jsonDecode(res.body)['response']['last_name'],
+              jsonDecode(res.body)['response']['email'],
+            ]);
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              BottomBar.routeName,
+              (route) => false,
+            );
+          },
+        );
+      } else {
+        Navigator.pop(context);
+        showSnackBar(context, jsonDecode(res.body)['response']);
+      }
     } catch (e) {
       print("catch");
+      Navigator.pop(context);
       showSnackBar(context, e.toString());
     }
   }
