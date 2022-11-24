@@ -3,7 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:taskshift_v1/constants/global_variables.dart';
+import 'package:taskshift_v1/features/auth/Linkedin_Auth.dart';
 import 'package:taskshift_v1/features/auth/services/social_auth_services.dart';
+import 'package:linkedin_login/linkedin_login.dart';
+
+const String redirectUrl =
+    'https://www.linkedin.com/developers/tools/oauth/redirect';
+const String clientId = '77ywlo36hrljlk';
+const String clientSecret = 'qNeoNHZ0cvAWazKe';
 
 class SocialMediaLoginRow extends StatefulWidget {
   const SocialMediaLoginRow({super.key});
@@ -14,40 +21,9 @@ class SocialMediaLoginRow extends StatefulWidget {
 
 class _SocialMediaLoginRowState extends State<SocialMediaLoginRow> {
   final SocialAuthServices socialAuthServices = SocialAuthServices();
-  // final GoogleSignIn _googlesignin = GoogleSignIn(scopes: ['email']);
-  // final FirebaseAuth _auth = FirebaseAuth.instance;
-  // final SocialAuthServices socialAuthServices = SocialAuthServices();
-
-  // GoogleSignInAccount? _currentUser;
-
-  // // @override
-  // Future<void> signIn(BuildContext context) async {
-  //   try {
-  //     GoogleSignInAccount? googleSignInAccount = await _googlesignin.signIn();
-
-  //     GoogleSignInAuthentication googleSignInAuthentication =
-  //         await googleSignInAccount!.authentication;
-
-  //     AuthCredential credential = GoogleAuthProvider.credential(
-  //       accessToken: googleSignInAuthentication.accessToken,
-  //       idToken: googleSignInAuthentication.idToken,
-  //     );
-
-  //     var authResult = await _auth.signInWithCredential(credential);
-
-  //     var profileData = authResult.additionalUserInfo;
-  //     if (profileData != null) {
-  //       socialAuthServices.googleLogin(
-  //         context: context,
-  //         email: profileData.profile!['email'],
-  //         providerId: profileData.profile!['sub'],
-  //         fullName: profileData.profile!['name'],
-  //       );
-  //     }
-  //   } catch (e) {
-  //     print('ERROR SIGNING IN $e');
-  //   }
-  // }
+  late UserObject? user = new UserObject();
+  late AuthCodeObject? authorizationCode = new AuthCodeObject();
+  bool logoutUser = false;
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +50,64 @@ class _SocialMediaLoginRowState extends State<SocialMediaLoginRow> {
         ),
         SizedBox(width: 37.0.w),
         InkWell(
-          onTap: () {},
+          onTap: () async {
+            Navigator.push(
+              context,
+              MaterialPageRoute<void>(
+                builder: (final BuildContext context) => LinkedInUserWidget(
+                  appBar: AppBar(
+                    title: const Text('OAuth User'),
+                  ),
+                  destroySession: logoutUser,
+                  redirectUrl: redirectUrl,
+                  clientId: clientId,
+                  clientSecret: clientSecret,
+                  projection: const [
+                    ProjectionParameters.id,
+                    ProjectionParameters.localizedFirstName,
+                    ProjectionParameters.localizedLastName,
+                    ProjectionParameters.firstName,
+                    ProjectionParameters.lastName,
+                    ProjectionParameters.profilePicture,
+                  ],
+                  onError: (final UserFailedAction e) {
+                    print('Error: ${e.toString()}');
+                    print('Error: ${e.stackTrace.toString()}');
+                  },
+                  onGetUserProfile: (final UserSucceededAction linkedInUser) {
+                    print(
+                      'Access token ${linkedInUser.user.token.accessToken}',
+                    );
+
+                    print('User id: ${linkedInUser.user.userId}');
+                    print('USer DATA : ' + linkedInUser.user.toString());
+
+                    user = UserObject(
+                      firstName:
+                          linkedInUser?.user?.firstName?.localized?.label,
+                      lastName: linkedInUser?.user?.lastName?.localized?.label,
+                      email: linkedInUser
+                          ?.user?.email?.elements![0]?.handleDeep?.emailAddress,
+                      profileImageUrl: linkedInUser
+                          ?.user
+                          ?.profilePicture
+                          ?.displayImageContent
+                          ?.elements![0]
+                          ?.identifiers![0]
+                          ?.identifier,
+                    );
+
+                    setState(() {
+                      logoutUser = false;
+                    });
+
+                    Navigator.pop(context);
+                  },
+                ),
+                fullscreenDialog: true,
+              ),
+            );
+          },
           child: Icon(
             Icons.apple_outlined,
             color: Colors.black,
