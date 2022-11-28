@@ -1,15 +1,10 @@
-import 'dart:io';
-
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:open_file/open_file.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:taskshift_v1/constants/utils.dart';
 
 import '../../../constants/global_variables.dart';
 
-class ReceiverChatBubble extends StatelessWidget {
+class ReceiverChatBubble extends StatefulWidget {
   String image;
   String message;
   String time;
@@ -24,48 +19,39 @@ class ReceiverChatBubble extends StatelessWidget {
     this.attachmentPath,
   }) : super(key: key);
 
-  Future openFile(String imagePath, String fileName) async {
-    // final file = await downloadFile(imagePath, fileName);
-    final file = await downloadFile(attachmentPath!.toString(), fileName);
-    if (file == null) return;
+  @override
+  State<ReceiverChatBubble> createState() => _ReceiverChatBubbleState();
+}
 
-    print('Path: ${file.path}');
+class _ReceiverChatBubbleState extends State<ReceiverChatBubble> {
+  bool openingImage = false;
 
-    OpenFile.open(file.path);
-  }
-
-  Future<File?> downloadFile(String imagePath, String name) async {
-    final appStorage = await getApplicationDocumentsDirectory();
-    final file = File('${appStorage.path}/$name');
-
-    try {
-      final response = await Dio().get(
-        imagePath,
-        options: Options(
-          responseType: ResponseType.bytes,
-          followRedirects: false,
-          receiveTimeout: 0,
-        ),
-      );
-
-      final raf = file.openSync(mode: FileMode.write);
-      raf.writeFromSync(response.data);
-      await raf.close();
-
-      return file;
-    } catch (e) {
-      print(e.toString());
-      return null;
-    }
-  }
+  // Future openFile(String fileName) async {
+  //   setState(() {
+  //     openingImage = true;
+  //   });
+  //   // final file = await downloadFile(imagePath, fileName);
+  //   final file = await downloadFile(
+  //       context, widget.attachmentPath!.toString(), fileName);
+  //   setState(() {
+  //     openingImage = false;
+  //   });
+  //   if (file == null) {
+  //     showSnackBar(context, 'Sorry, this media file appears to be missing');
+  //     return;
+  //   }
+  //   print('Path: ${file.path}');
+  //   OpenFile.open(file.path);
+  // }
 
   @override
   Widget build(BuildContext context) {
     String fileImage = '';
-    if (url != '') {
-      var imageSplit = url!.split('src=').last.split('>').first.toString();
+    if (widget.url != '') {
+      var imageSplit =
+          widget.url!.split('src=').last.split('>').first.toString();
       fileImage = imageSplit.split('"').elementAt(1);
-      print('image ---> $fileImage');
+      // print('image ---> $fileImage');
     }
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -73,12 +59,8 @@ class ReceiverChatBubble extends StatelessWidget {
         CircleAvatar(
           backgroundColor: const Color.fromRGBO(142, 142, 142, 0.5),
           backgroundImage: CachedNetworkImageProvider(
-            '$uri$image',
+            '$uri${widget.image}',
           ),
-          // AssetImage(
-          //   // "assets/images/clientimage.png",
-          //   image,
-          // ),
           radius: 15,
         ),
         const SizedBox(
@@ -102,15 +84,36 @@ class ReceiverChatBubble extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                url != ''
+                widget.url != ''
                     ? Column(
                         children: [
-                          GestureDetector(
-                              onTap: () => openFile(
-                                    'https://taskshift.com/storage/conversations/210/3385/H0jiLMabOvJWx2PG3gsWPGI5ipbTC4lcxfjfRqJW.pdf',
-                                    message,
+                          openingImage
+                              ? SizedBox(
+                                  child: Stack(
+                                    alignment: AlignmentDirectional.center,
+                                    children: [
+                                      CachedNetworkImage(imageUrl: fileImage),
+                                      const CircularProgressIndicator(),
+                                    ],
                                   ),
-                              child: CachedNetworkImage(imageUrl: fileImage)),
+                                )
+                              : GestureDetector(
+                                  // onTap: () => openFile(widget.message),
+                                  onTap: () async {
+                                    setState(() {
+                                      openingImage = true;
+                                    });
+                                    await openFile(
+                                        context,
+                                        widget.attachmentPath.toString(),
+                                        widget.message);
+                                    setState(() {
+                                      openingImage = false;
+                                    });
+                                  },
+                                  child:
+                                      CachedNetworkImage(imageUrl: fileImage),
+                                ),
                           const SizedBox(height: 10.0),
                         ],
                       )
@@ -118,12 +121,12 @@ class ReceiverChatBubble extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(right: 15.0),
                   child: Text(
-                    message,
+                    widget.message,
                     style: const TextStyle(color: Colors.white, fontSize: 15),
                   ),
                 ),
                 Text(
-                  time.split(' ').last,
+                  widget.time.split(' ').last,
                   style: const TextStyle(color: Colors.white, fontSize: 10),
                 ),
               ],

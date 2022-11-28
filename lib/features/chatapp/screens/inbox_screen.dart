@@ -151,13 +151,39 @@ class _InboxScreenState extends State<InboxScreen> {
                                 arguments: searchresult![index],
                               ),
                               child: ListTile(
-                                leading: CircleAvatar(
-                                  backgroundColor:
-                                      const Color.fromRGBO(142, 142, 142, 0.5),
-                                  backgroundImage: CachedNetworkImageProvider(
-                                    '$uri${searchresult![index].userimage!}',
-                                  ),
-                                  radius: 22.5,
+                                leading: Stack(
+                                  clipBehavior: Clip.none,
+                                  // fit: StackFit.expand,
+                                  children: [
+                                    CircleAvatar(
+                                      backgroundColor: const Color.fromRGBO(
+                                          142, 142, 142, 0.5),
+                                      backgroundImage:
+                                          CachedNetworkImageProvider(
+                                        '$uri${conversationList![index].userimage!}',
+                                        // 'https://profiles.ucr.edu/app/images/default-profile.jpg',
+                                      ),
+                                      //     NetworkImage(
+                                      //   '$uri${conversationList![index].userimage!}',
+                                      // ),
+                                      radius: 22.5,
+                                    ),
+                                    Positioned(
+                                      width: 11.0.w,
+                                      height: 11.0.h,
+                                      top: 38.0.h,
+                                      left: 30.0.w,
+                                      child: RawMaterialButton(
+                                        onPressed: () {},
+                                        elevation: 2.0,
+                                        fillColor:
+                                            conversationList![index].isOnline!
+                                                ? Colors.green
+                                                : Colors.red,
+                                        shape: const CircleBorder(),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                                 title: Text(
                                   searchresult![index].username!,
@@ -230,20 +256,44 @@ class _InboxScreenState extends State<InboxScreen> {
                                       arguments: conversationList![index],
                                     ),
                                     child: ListTile(
-                                      leading: CircleAvatar(
-                                        backgroundColor: const Color.fromRGBO(
-                                            142, 142, 142, 0.5),
-                                        backgroundImage:
-                                            CachedNetworkImageProvider(
-                                          '$uri${conversationList![index].userimage!}',
+                                      leading: SizedBox(
+                                        // width: 45.0,
+                                        // height: 45.0,
+                                        child: Stack(
+                                          clipBehavior: Clip.none,
+                                          // fit: StackFit.expand,
+                                          children: [
+                                            CircleAvatar(
+                                              backgroundColor:
+                                                  const Color.fromRGBO(
+                                                      142, 142, 142, 0.5),
+                                              backgroundImage:
+                                                  CachedNetworkImageProvider(
+                                                '$uri${conversationList![index].userimage!}',
+                                                // 'https://profiles.ucr.edu/app/images/default-profile.jpg',
+                                              ),
+                                              radius: 22.5,
+                                            ),
+                                            Positioned(
+                                              width: 11.0.w,
+                                              height: 11.0.h,
+                                              // top: 38.0.h,
+                                              // left: 30.0.w,
+                                              bottom: 2.0.h,
+                                              right: 2.0.w,
+                                              child: RawMaterialButton(
+                                                onPressed: null,
+                                                elevation: 2.0,
+                                                fillColor:
+                                                    conversationList![index]
+                                                            .isOnline!
+                                                        ? Colors.green
+                                                        : Colors.red,
+                                                shape: const CircleBorder(),
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                        //     NetworkImage(
-                                        //   '$uri${conversationList![index].userimage!}',
-                                        // ),
-                                        // AssetImage(
-                                        //   // "assets/images/clientimage.png",
-                                        // ),
-                                        radius: 22.5,
                                       ),
                                       title: Text(
                                         // 'Samad Ilyas',

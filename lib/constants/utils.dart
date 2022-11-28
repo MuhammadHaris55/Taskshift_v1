@@ -1,5 +1,10 @@
 // import 'package:file_picker/file_picker.dart';
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 
 void showSnackBar(BuildContext context, String text) {
   ScaffoldMessenger.of(context).showSnackBar(
@@ -8,6 +13,46 @@ void showSnackBar(BuildContext context, String text) {
     ),
   );
 }
+
+//To download the file of the chat attachments for view on the fly
+Future openFile(BuildContext context, String imagePath, String fileName) async {
+  final file = await downloadFile(context, imagePath.toString(), fileName);
+
+  if (file == null) {
+    showSnackBar(context, 'Sorry, this media file appears to be missing');
+    return;
+  }
+  // print('Path: ${file.path}');
+  OpenFile.open(file.path);
+}
+
+Future<File?> downloadFile(
+    BuildContext context, String imagePath, String name) async {
+  final appStorage = await getApplicationDocumentsDirectory();
+  final file = File('${appStorage.path}/$name');
+
+  try {
+    final response = await Dio().get(
+      imagePath,
+      options: Options(
+        responseType: ResponseType.bytes,
+        followRedirects: false,
+        receiveTimeout: 0,
+      ),
+    );
+
+    final raf = file.openSync(mode: FileMode.write);
+    raf.writeFromSync(response.data);
+    await raf.close();
+
+    return file;
+  } catch (e) {
+    // showSnackBar(context, e.toString());
+    return null;
+  }
+}
+//-------- END -------To download the file of the chat attachments for view on the fly
+
 
 // Future<List<File>> pickImages() async {
 //   List<File> images = [];

@@ -1,14 +1,10 @@
-import 'dart:io';
-
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:open_file/open_file.dart';
-import 'package:path_provider/path_provider.dart';
 
 import '../../../constants/global_variables.dart';
+import '../../../constants/utils.dart';
 
-class SenderChatBubble extends StatelessWidget {
+class SenderChatBubble extends StatefulWidget {
   String message;
   String time;
   String? url;
@@ -21,49 +17,21 @@ class SenderChatBubble extends StatelessWidget {
     this.attachmentPath,
   }) : super(key: key);
 
-  Future openFile(String imagePath, String fileName) async {
-    // final file = await downloadFile(imagePath, fileName);
-    print('imagepath -- > $attachmentPath');
-    final file = await downloadFile(attachmentPath!.toString(), fileName);
-    if (file == null) return;
+  @override
+  State<SenderChatBubble> createState() => _SenderChatBubbleState();
+}
 
-    print('Path: ${file.path}');
-
-    OpenFile.open(file.path);
-  }
-
-  Future<File?> downloadFile(String imagePath, String name) async {
-    final appStorage = await getApplicationDocumentsDirectory();
-    final file = File('${appStorage.path}/$name');
-
-    try {
-      final response = await Dio().get(
-        imagePath,
-        options: Options(
-          responseType: ResponseType.bytes,
-          followRedirects: false,
-          receiveTimeout: 0,
-        ),
-      );
-
-      final raf = file.openSync(mode: FileMode.write);
-      raf.writeFromSync(response.data);
-      await raf.close();
-
-      return file;
-    } catch (e) {
-      print(e.toString());
-      return null;
-    }
-  }
+class _SenderChatBubbleState extends State<SenderChatBubble> {
+  bool openingImage = false;
 
   @override
   Widget build(BuildContext context) {
-    String image = '';
-    if (url != '') {
-      var imageSplit = url!.split('src=').last.split('>').first.toString();
-      image = imageSplit.split('"').elementAt(1);
-      print('image ---> $image');
+    String fileImage = '';
+    if (widget.url != '') {
+      var imageSplit =
+          widget.url!.split('src=').last.split('>').first.toString();
+      fileImage = imageSplit.split('"').elementAt(1);
+      print('image ---> $fileImage');
     }
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
@@ -86,33 +54,35 @@ class SenderChatBubble extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                url != ''
-                    ?
-                    // Container(
-                    //     height: 150.0,
-                    //     decoration: BoxDecoration(
-                    //       image: DecorationImage(
-                    //         fit: BoxFit.fill,
-                    //         image: CachedNetworkImageProvider(image),
-                    //       ),
-                    //     ),
-                    //   )
-                    Column(
+                widget.url != ''
+                    ? Column(
                         children: [
-                          GestureDetector(
-                            onTap: () => openFile(
-                              'https://taskshift.com/storage/conversations/210/3385/H0jiLMabOvJWx2PG3gsWPGI5ipbTC4lcxfjfRqJW.pdf',
-                              message,
-                            ),
-                            child:
-                                // Image(
-                                //     image: NetworkImage(
-                                //         '${image.split('com/').first}/${image.split('com/').last}'
-                                //         // image,
-                                //         )),
-                                // Image.network(image),
-                                CachedNetworkImage(imageUrl: image),
-                          ),
+                          openingImage
+                              ? SizedBox(
+                                  child: Stack(
+                                    alignment: AlignmentDirectional.center,
+                                    children: [
+                                      CachedNetworkImage(imageUrl: fileImage),
+                                      const CircularProgressIndicator(),
+                                    ],
+                                  ),
+                                )
+                              : GestureDetector(
+                                  onTap: () async {
+                                    setState(() {
+                                      openingImage = true;
+                                    });
+                                    await openFile(
+                                        context,
+                                        widget.attachmentPath.toString(),
+                                        widget.message);
+                                    setState(() {
+                                      openingImage = false;
+                                    });
+                                  },
+                                  child:
+                                      CachedNetworkImage(imageUrl: fileImage),
+                                ),
                           const SizedBox(height: 10.0),
                         ],
                       )
@@ -120,12 +90,12 @@ class SenderChatBubble extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(right: 15.0),
                   child: Text(
-                    message,
+                    widget.message,
                     style: const TextStyle(color: Colors.white, fontSize: 15),
                   ),
                 ),
                 Text(
-                  time.split(' ').last,
+                  widget.time.split(' ').last,
                   style: const TextStyle(color: Colors.white, fontSize: 10),
                 ),
               ],

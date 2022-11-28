@@ -1,9 +1,10 @@
 import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
+import 'package:linkedin_login/linkedin_login.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -14,13 +15,14 @@ import '../../../constants/utils.dart';
 import '../../../providers/user_provider.dart';
 
 class SocialAuthServices {
+  //------------------------------------------ Pre Google login START ----------------------------------------
   final GoogleSignIn _googlesignin = GoogleSignIn(scopes: ['email']);
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   GoogleSignInAccount? _currentUser;
 
   // @override
-  Future<void> signIn(BuildContext context) async {
+  Future<void> preGoogleLogin(BuildContext context) async {
     try {
       GoogleSignInAccount? googleSignInAccount = await _googlesignin.signIn();
 
@@ -37,11 +39,12 @@ class SocialAuthServices {
 
       var profileData = authResult.additionalUserInfo;
       if (profileData != null) {
-        googleLogin(
+        socialLogins(
           context: context,
           email: profileData.profile!['email'],
           providerId: profileData.profile!['sub'],
           fullName: profileData.profile!['name'],
+          api: Apis.googleLogin,
         );
       }
     } catch (e) {
@@ -50,17 +53,107 @@ class SocialAuthServices {
       showSnackBar(context, 'Server issue');
     }
   }
+  //------------------------------------------ Pre Google login END ----------------------------------------
 
-  void googleLogin({
+  //------------------------------------------ Pre LinkedIn login START --------------------------------------
+  // late UserObject? user = new UserObject();
+  // late AuthCodeObject? authorizationCode = new AuthCodeObject();
+  bool logoutUser = false;
+
+  final String redirectUrl =
+      'https://www.linkedin.com/developers/tools/oauth/redirect';
+  final String clientId = '77ywlo36hrljlk';
+  final String clientSecret = 'qNeoNHZ0cvAWazKe';
+
+  Future<void> preLinkedInLogin(BuildContext context) async {
+    Navigator.push(
+      context,
+      MaterialPageRoute<void>(
+        builder: (final BuildContext context) => LinkedInUserWidget(
+          appBar: AppBar(
+            title: const Text('OAuth User'),
+          ),
+          destroySession: logoutUser,
+          redirectUrl: redirectUrl,
+          clientId: clientId,
+          clientSecret: clientSecret,
+          projection: const [
+            ProjectionParameters.id,
+            ProjectionParameters.localizedFirstName,
+            ProjectionParameters.localizedLastName,
+            ProjectionParameters.firstName,
+            ProjectionParameters.lastName,
+            ProjectionParameters.profilePicture,
+          ],
+          onError: (final UserFailedAction e) {
+            print('Error: ${e.toString()}');
+            print('Error: ${e.stackTrace.toString()}');
+          },
+          onGetUserProfile: (final UserSucceededAction linkedInUser) {
+            print(
+              'Access token ${linkedInUser.user.token.accessToken}',
+            );
+
+            String? providerId = linkedInUser.user.userId;
+            String? email =
+                linkedInUser.user.email?.elements![0].handleDeep?.emailAddress;
+            String? fullName =
+                '${linkedInUser.user.localizedFirstName.toString()} ${linkedInUser.user.localizedLastName.toString()}';
+
+            if (email != null && providerId != null) {
+              socialLogins(
+                context: context,
+                providerId: providerId,
+                fullName: fullName,
+                email: email,
+                api: Apis.linkedinLogin,
+              );
+            } else {
+              showSnackBar(context, 'Crendential or server error');
+            }
+            // print('User id: ${linkedInUser.user.userId}');
+            // // print('USer DATA : ' + linkedInUser.user.toString());
+            // print(
+            //     'USer email : ${linkedInUser.user.email?.elements![0].handleDeep?.emailAddress}');
+            // print(
+            //     'USer name : ${linkedInUser.user.localizedFirstName.toString()}');
+            // print(
+            //     'USer lastName : ${linkedInUser.user.localizedLastName.toString()}');
+
+            // user = UserObject(
+            //   firstName: linkedInUser.user.firstName?.localized?.label,
+            //   lastName: linkedInUser.user.lastName?.localized?.label,
+            //   email: linkedInUser
+            //       .user.email?.elements![0].handleDeep?.emailAddress,
+            //   profileImageUrl: linkedInUser
+            //       .user
+            //       .profilePicture
+            //       ?.displayImageContent
+            //       ?.elements![0]
+            //       .identifiers![0]
+            //       .identifier,
+            // );
+            Navigator.pop(context);
+          },
+        ),
+        fullscreenDialog: true,
+      ),
+    );
+  }
+
+  //------------------------------------------ Pre LinkedIn login END ----------------------------------------
+
+  void socialLogins({
     required BuildContext context,
     required String providerId,
     required String fullName,
     required String email,
+    required String api,
   }) async {
     try {
       print('In try --- $fullName --- $email ---- $providerId' + providerId);
       http.Response res = await http.post(
-        Uri.parse(Apis.googleLogin),
+        Uri.parse(api),
         headers: {
           'Content-Type': 'application/json',
         },
