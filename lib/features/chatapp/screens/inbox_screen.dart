@@ -2,11 +2,13 @@ import 'package:badges/badges.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskshift_v1/common/widgets/custom_text_widget.dart';
 import 'package:taskshift_v1/features/chatapp/screens/chatroom_screen.dart';
 import 'package:taskshift_v1/features/chatapp/services/inbox_servies.dart';
 import 'package:taskshift_v1/models/inbox.dart';
+import 'package:taskshift_v1/providers/user_provider.dart';
 import '../../../constants/global_variables.dart';
 
 class InboxScreen extends StatefulWidget {
@@ -30,17 +32,17 @@ class _InboxScreenState extends State<InboxScreen> {
   void initState() {
     super.initState();
     getConversationList();
-    sharedPrefImage();
+    // sharedPrefImage();
   }
 
-  sharedPrefImage() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String prefImage = prefs.getString('image') ?? '';
-    if (prefImage.isNotEmpty) {
-      print(prefImage);
-      image = prefImage;
-    }
-  }
+  // sharedPrefImage() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String prefImage = prefs.getString('image') ?? '';
+  //   if (prefImage.isNotEmpty) {
+  //     print(prefImage);
+  //     image = prefImage;
+  //   }
+  // }
 
   Future<void> getConversationList() async {
     loadingChat = true;
@@ -70,6 +72,7 @@ class _InboxScreenState extends State<InboxScreen> {
 
   @override
   Widget build(BuildContext context) {
+    image = context.watch<UserProvider>().user.image;
     return Scaffold(
       backgroundColor: const Color.fromRGBO(255, 255, 255, 1),
       appBar: AppBar(
