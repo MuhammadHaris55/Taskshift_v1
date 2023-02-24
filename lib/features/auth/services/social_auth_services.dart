@@ -133,7 +133,7 @@ class SocialAuthServices {
             //       .identifiers![0]
             //       .identifier,
             // );
-            Navigator.pop(context);
+      //      Navigator.pop(context);
           },
         ),
         fullscreenDialog: true,

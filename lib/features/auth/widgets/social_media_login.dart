@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:taskshift_v1/constants/global_variables.dart';
-import 'package:taskshift_v1/features/auth/services/social_auth_services.dart';
+
+import '../../../constants/global_variables.dart';
+import '../services/social_auth_services.dart';
 
 class SocialMediaLoginRow extends StatefulWidget {
   const SocialMediaLoginRow({super.key});
@@ -41,21 +42,33 @@ class _SocialMediaLoginRowState extends State<SocialMediaLoginRow> {
           onTap: () {
             socialAuthServices.preLinkedInLogin(context);
           },
-          child: Icon(
-            Icons.apple_outlined,
-            color: Colors.black,
-            size: 50.0.w,
+          child: CircleAvatar(
+            backgroundColor: Colors.transparent,
+            backgroundImage: AssetImage(
+              AssetImages.linkldnLogo,
+            ),
+            radius: 25.0.w,
           ),
         ),
-        SizedBox(width: 37.0.w),
-        InkWell(
-          onTap: () {},
-          child: Icon(
-            Icons.facebook_rounded,
-            color: const Color.fromRGBO(66, 103, 178, 1),
-            size: 45.0.w,
-          ),
-        )
+    //    InkWell(
+    //      onTap: () {
+    //        socialAuthServices.preLinkedInLogin(context);
+    //      },
+    //      child: Icon(
+    //        Icons.apple_outlined,
+    //        color: Colors.black,
+    //        size: 50.0.w,
+    //      ),
+    //    ),
+    //    SizedBox(width: 37.0.w),
+    //    InkWell(
+    //      onTap: () {},
+    //      child: Icon(
+    //        Icons.facebook_rounded,
+    //        color: const Color.fromRGBO(66, 103, 178, 1),
+    //        size: 45.0.w,
+    //      ),
+    //    )
       ],
     );
   }
