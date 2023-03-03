@@ -30,9 +30,9 @@ class Apis {
 class AssetImages {
   // static String googleLogo = 'assets/images/google.jpg';  //  From Faiz --white background
   static String googleLogo =
-      'assets/images/googlee.png'; //  From internet --transparent background
+      'assets/images/Google_logo.png'; //  From internet --transparent background
   static String appleLogo = 'assets/images/apple.jpg';
-  static String linkldnLogo = 'assets/images/linkedinimg.png';
+  static String linkldnLogo = 'assets/images/LinkedIn_logo.png';
   static String facebookLogo = 'assets/images/facebook.jpg';
   // static String appLogo = 'assets/images/Taskshift_logo.png';  // It is blur
   static String appLogo = 'assets/images/appLogo.png';
