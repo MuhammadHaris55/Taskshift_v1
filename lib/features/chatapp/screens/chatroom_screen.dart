@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -5,17 +7,16 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:taskshift_v1/common/widgets/bottom_bar.dart';
-import 'package:taskshift_v1/features/chatapp/services/chat_services.dart';
-import 'package:taskshift_v1/features/chatapp/widgets/receiver_chat_bubble.dart';
-import 'package:taskshift_v1/features/chatapp/widgets/sender_chat_bubble.dart';
-import 'package:taskshift_v1/models/chatMessage.dart';
 
+import '../../../common/widgets/bottom_bar.dart';
 import '../../../constants/global_variables.dart';
+import '../../../models/chatMessage.dart';
 import '../../../models/inbox.dart';
+import '../services/chat_services.dart';
 import '../services/inbox_servies.dart';
+import '../widgets/receiver_chat_bubble.dart';
+import '../widgets/sender_chat_bubble.dart';
 
 class ChatroomScreen extends StatefulWidget {
   static const routeName = '/chatroom-screen';
@@ -40,6 +41,7 @@ class _ChatroomScreenState extends State<ChatroomScreen> {
   final TextEditingController messageController = TextEditingController();
   final ChatServices chatServices = ChatServices();
   bool? isOnline;
+  bool sendingFile = false;
 
   @override
   void initState() {
@@ -51,11 +53,12 @@ class _ChatroomScreenState extends State<ChatroomScreen> {
   Future getMessageList() async {
     prefs = await SharedPreferences.getInstance();
     userId = prefs.getInt('userId') ?? 0;
+    await ChatRemoteService()
+        .conversationStatusRead('', widget.receiver.conversationId!.toInt());
     var responseList = await ChatRemoteService()
         .getMessageListApi(widget.receiver.conversationId!.toInt());
     if (responseList != null) {
       conversationList = responseList;
-      print('messageList ---> $conversationList');
     }
     setState(() {});
     bool? onlineBool = await chatServices
@@ -113,6 +116,9 @@ class _ChatroomScreenState extends State<ChatroomScreen> {
   }
 
   selectFile() async {
+    setState(() {
+      sendingFile = true;
+    });
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: [
@@ -128,16 +134,24 @@ class _ChatroomScreenState extends State<ChatroomScreen> {
         'gz'
       ],
     );
-    if (result == null) return;
+    if (result == null) {
+      setState(() {
+        sendingFile = false;
+      });
+      return;
+    }
 
     final file = File(result.files.single.path!);
-    ChatRemoteService().uploadImage(
+    await ChatRemoteService().uploadImage(
       context,
       userId,
       conversationList![0].clientid,
       widget.receiver.conversationId!.toInt(),
       result.files.single,
     );
+    setState(() {
+      sendingFile = false;
+    });
     // ChatRemoteService().uploadImage(file.path);
 
     // setState(() {
@@ -173,17 +187,50 @@ class _ChatroomScreenState extends State<ChatroomScreen> {
           title: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              CircleAvatar(
-                minRadius: 22.5,
-                backgroundColor: const Color.fromRGBO(142, 142, 142, 0.5),
-                backgroundImage: CachedNetworkImageProvider(
-                  '$uri${widget.receiver.userimage!}',
+              ClipOval(
+                child: CircleAvatar(
+                  backgroundColor: const Color.fromRGBO(142, 142, 142, 0.5),
+                  radius: 22.5,
+                  child: widget.receiver.userimage!.isEmpty
+                      ? Text(
+                          widget.receiver.alphabeticUserImage!,
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 22.0,
+                          ),
+                        )
+                      : CachedNetworkImage(
+                          imageUrl: '$uri${widget.receiver.userimage!}',
+                          placeholder: (context, url) => const SizedBox(
+                              height: 20.0,
+                              width: 20.0,
+                              child: CircularProgressIndicator()),
+                          errorWidget: (context, url, error) =>
+                              const Icon(Icons.error),
+                        ),
                 ),
-                // AssetImage(
-                //   widget.receiver.userimage!,
-                // ),
-                // radius: 30,
               ),
+              // widget.receiver.userimage!.isEmpty
+              //     ? CircleAvatar(
+              //         minRadius: 22.5,
+              //         backgroundColor: const Color.fromRGBO(142, 142, 142, 0.5),
+              //         child: Text(
+              //           widget.receiver.alphabeticUserImage!,
+              //           style: const TextStyle(
+              //             color: Colors.black,
+              //             fontWeight: FontWeight.bold,
+              //             fontSize: 22.0,
+              //           ),
+              //         ),
+              //       )
+              //     : CircleAvatar(
+              //         minRadius: 22.5,
+              //         backgroundColor: const Color.fromRGBO(142, 142, 142, 0.5),
+              //         backgroundImage: CachedNetworkImageProvider(
+              //           '$uri${widget.receiver.userimage!}',
+              //         ),
+              //       ),
               const SizedBox(width: 10.0),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -220,98 +267,108 @@ class _ChatroomScreenState extends State<ChatroomScreen> {
             ],
           ),
         ),
-        body: Column(
-          children: [
-            Expanded(
-              child: conversationList.isEmpty
-                  ? const Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  : ListView.builder(
-                      reverse: true,
-                      // itemCount: ChatMaterial.messagesList.length,
-                      itemCount: conversationList!.length,
-                      itemBuilder: (context, index) => Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10.0, vertical: 10.0),
-                        child: Column(
-                          children: [
-                            // ReceiverChatBubble(
-                            //   image: conversationList![index].userimageUrl,
-                            //   message: conversationList![index].message,
-                            // ),
-                            conversationList![index].userid == userId
-                                ? SenderChatBubble(
-                                    message: conversationList![index].message,
-                                    time: conversationList![index].created,
-                                    url: conversationList![index].url,
-                                    attachmentPath:
-                                        conversationList![index].attachmentPath,
-                                    // message: ChatMaterial.messagesList[index]['msg']!,
-                                  )
-                                : ReceiverChatBubble(
-                                    image: widget.receiver.userimage!,
-                                    message: conversationList![index].message,
-                                    time: conversationList![index].created,
-                                    url: conversationList![index].url,
-                                    attachmentPath:
-                                        conversationList![index].attachmentPath,
-                                  ),
-                          ],
+        body: sendingFile
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : Column(
+                children: [
+                  Expanded(
+                    child: conversationList.isEmpty
+                        ? const Center(
+                            child: CircularProgressIndicator(),
+                          )
+                        : ListView.builder(
+                            reverse: true,
+                            // itemCount: ChatMaterial.messagesList.length,
+                            itemCount: conversationList!.length,
+                            itemBuilder: (context, index) => Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10.0, vertical: 10.0),
+                              child: Column(
+                                children: [
+                                  // ReceiverChatBubble(
+                                  //   image: conversationList![index].userimageUrl,
+                                  //   message: conversationList![index].message,
+                                  // ),
+                                  conversationList![index].userid == userId
+                                      ? SenderChatBubble(
+                                          message:
+                                              conversationList![index].message,
+                                          time:
+                                              conversationList![index].created,
+                                          url: conversationList![index].url,
+                                          attachmentPath:
+                                              conversationList![index]
+                                                  .attachmentPath,
+                                          // message: ChatMaterial.messagesList[index]['msg']!,
+                                        )
+                                      : ReceiverChatBubble(
+                                          image: widget.receiver.userimage!,
+                                          message:
+                                              conversationList![index].message,
+                                          time:
+                                              conversationList![index].created,
+                                          url: conversationList![index].url,
+                                          attachmentPath:
+                                              conversationList![index]
+                                                  .attachmentPath,
+                                        ),
+                                ],
+                              ),
+                            ),
+                          ),
+                  ),
+                  // SizedBox(
+                  //   child: Text(pickedFile!.name),
+                  // ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 2.0),
+                    decoration: const BoxDecoration(
+                      border: Border(
+                        top: BorderSide(
+                          color: AppColors.colorGrey,
+                          width: 0.5,
                         ),
                       ),
                     ),
-            ),
-            // SizedBox(
-            //   child: Text(pickedFile!.name),
-            // ),
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 2.0),
-              decoration: const BoxDecoration(
-                border: Border(
-                  top: BorderSide(
-                    color: AppColors.colorGrey,
-                    width: 0.5,
-                  ),
-                ),
-              ),
-              child: TextFormField(
-                controller: messageController,
-                decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 20.0, vertical: 10.0),
-                  floatingLabelStyle: TextStyle(color: Colors.grey[600]),
-                  border: InputBorder.none,
-                  suffixIcon: SizedBox(
-                    width: 100.0,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        IconButton(
-                          onPressed: selectFile,
-                          icon: const Icon(
-                            Icons.attachment_sharp,
-                            color: AppColors.colorBlue,
-                            size: 25.0,
+                    child: TextFormField(
+                      controller: messageController,
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 20.0, vertical: 10.0),
+                        floatingLabelStyle: TextStyle(color: Colors.grey[600]),
+                        border: InputBorder.none,
+                        suffixIcon: SizedBox(
+                          width: 100.0,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              IconButton(
+                                onPressed: selectFile,
+                                icon: const Icon(
+                                  Icons.attachment_sharp,
+                                  color: AppColors.colorBlue,
+                                  size: 25.0,
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: sendMessage,
+                                icon: const Icon(
+                                  Icons.send,
+                                  color: AppColors.colorBlue,
+                                  size: 25.0,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        IconButton(
-                          onPressed: sendMessage,
-                          icon: const Icon(
-                            Icons.send,
-                            color: AppColors.colorBlue,
-                            size: 25.0,
-                          ),
-                        ),
-                      ],
+                        hintText: "Write a message",
+                      ),
                     ),
                   ),
-                  hintText: "Write a message",
-                ),
+                ],
               ),
-            ),
-          ],
-        ),
       ),
     );
   }

@@ -1,15 +1,15 @@
 import 'dart:convert';
 
-import 'package:cron/cron.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:taskshift_v1/constants/global_variables.dart';
-import 'package:taskshift_v1/constants/utils.dart';
-import 'package:taskshift_v1/models/chatMessage.dart';
-import 'package:taskshift_v1/models/inbox.dart';
+
+import '../../../constants/global_variables.dart';
+import '../../../constants/utils.dart';
+import '../../../models/chatMessage.dart';
+import '../../../models/inbox.dart';
 
 class ChatRemoteService {
   Future<List<ChatModel>?> getConversationListApi() async {
@@ -65,7 +65,7 @@ class ChatRemoteService {
     }
 
     // ---------------------------------- to make conversation status READ
-    conversationStatusRead(token, conversationId);
+    await conversationStatusRead(token, conversationId);
 
     print('chatLIst ----> $chatList');
     print('res ---> $res');
@@ -73,6 +73,10 @@ class ChatRemoteService {
   }
 
   conversationStatusRead(String token, int conversationId) async {
+    if (token.isEmpty) {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      String token = prefs.getString('x-auth-token') ?? '';
+    }
     await http.post(
       Uri.parse(Apis.msgStatusRead),
       headers: {
@@ -138,7 +142,7 @@ class ChatRemoteService {
     var res = await request.send();
     print('file status --> ${res.statusCode}');
     print('file reason pharase --> ${res.reasonPhrase}');
-    showSnackBar(context, 'error ${res.reasonPhrase}');
+    // showSnackBar(context, 'error ${res.reasonPhrase}');
     // return res.reasonPhrase;
   }
 

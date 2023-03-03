@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:taskshift_v1/common/widgets/bottom_bar.dart';
-import 'package:taskshift_v1/constants/global_variables.dart';
-import 'package:taskshift_v1/features/auth/auth_screen.dart';
-import 'package:taskshift_v1/providers/user_provider.dart';
-import 'package:taskshift_v1/router.dart';
 
-import 'features/auth/services/auth_services.dart';
+import 'common/widgets/bottom_bar.dart';
+import 'constants/global_variables.dart';
+import 'features/auth/auth_screen.dart';
+import 'providers/inboxList_provider.dart';
+import 'providers/user_provider.dart';
+import 'router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,6 +21,9 @@ void main() async {
       providers: [
         ChangeNotifierProvider(
           create: (context) => UserProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => InboxListProvider(),
         ),
       ],
       child: const MyApp(),
@@ -104,7 +107,6 @@ class MyApp extends StatelessWidget {
         );
       },
       child: const SplashScreen(),
-      // child: const AuthScreen(),
     );
   }
 }
@@ -117,13 +119,9 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  // final AuthService authService = AuthService();
-
   @override
   void initState() {
     super.initState();
-    // print('auth serv fun');
-    // authService.getUserData(context);
     nextScreen();
     // Timer(
     //   const Duration(seconds: 3),
@@ -139,12 +137,9 @@ class _SplashScreenState extends State<SplashScreen> {
 
     Timer(
       const Duration(seconds: 3),
-      // () => Navigator.pushNamed(context, AuthScreen.routeName),
       () => token != ''
           ? Navigator.pushReplacementNamed(context, BottomBar.routeName)
           : Navigator.pushReplacementNamed(context, AuthScreen.routeName),
-      // () => const AuthScreen(),
-      // Navigator.pushNamed(context, AuthScreen.routeName),
     );
   }
 

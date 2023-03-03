@@ -2,11 +2,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:taskshift_v1/features/auth/auth_screen.dart';
-import 'package:taskshift_v1/features/auth/services/auth_services.dart';
+
 import '../../../common/widgets/custom_text_widget.dart';
 import '../../../constants/global_variables.dart';
 import '../../../providers/user_provider.dart';
+import '../../auth/auth_screen.dart';
+import '../../auth/services/auth_services.dart';
 import '../widgets/profile_details_row.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -29,7 +30,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    // authService.getUserData(context);
     initProf();
   }
 
@@ -49,7 +49,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var user = context.watch<UserProvider>().user;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.backgroundColor,
@@ -67,23 +66,44 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    CircleAvatar(
-                      // backgroundImage: AssetImage(AssetImages.userDP),
-                      backgroundColor: const Color.fromRGBO(142, 142, 142, 0.5),
-                      backgroundImage: CachedNetworkImageProvider(
-                        // user.image,
-                        profile[0].isNotEmpty
-                            ? profile[0]
-                            : 'https://profiles.ucr.edu/app/images/default-profile.jpg',
-                        // 'https://imgs.search.brave.com/55eFn53foS1oKYLG96By3dUN27TkYdKvML9821unvy0/rs:fit:705:705:1/g:ce/aHR0cHM6Ly93d3cu/d29ybGRmdXR1cmVj/b3VuY2lsLm9yZy93/cC1jb250ZW50L3Vw/bG9hZHMvMjAyMC8w/Ni9ibGFuay1wcm9m/aWxlLXBpY3R1cmUt/OTczNDYwXzEyODAt/MS03MDV4NzA1LnBu/Zw',
-                      ),
-                      // NetworkImage(
-                      //   // user.image,
-                      //   profile.isNotEmpty
-                      //       ? profile[0]
-                      //       : 'https://imgs.search.brave.com/55eFn53foS1oKYLG96By3dUN27TkYdKvML9821unvy0/rs:fit:705:705:1/g:ce/aHR0cHM6Ly93d3cu/d29ybGRmdXR1cmVj/b3VuY2lsLm9yZy93/cC1jb250ZW50L3Vw/bG9hZHMvMjAyMC8w/Ni9ibGFuay1wcm9m/aWxlLXBpY3R1cmUt/OTczNDYwXzEyODAt/MS03MDV4NzA1LnBu/Zw',
-                      // ),
-                      radius: 60,
+                    // CircleAvatar(
+                    //   backgroundColor: const Color.fromRGBO(142, 142, 142, 0.5),
+                    //   backgroundImage: CachedNetworkImageProvider(
+                    //     profile[0].isNotEmpty
+                    //         ? profile[0]
+                    //         : 'https://profiles.ucr.edu/app/images/default-profile.jpg',
+                    //   ),
+                    //   radius: 60,
+                    // ),
+                    Consumer<UserProvider>(
+                      builder: (context, userData, child) {
+                        return ClipOval(
+                          child: CircleAvatar(
+                            backgroundColor:
+                                const Color.fromRGBO(142, 142, 142, 0.5),
+                            radius: 60,
+                            child: userData.user.image.isEmpty
+                                ? Text(
+                                    userData.user.alphabeticImage,
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 22.0,
+                                    ),
+                                  )
+                                : CachedNetworkImage(
+                                    imageUrl: '$uri${userData.user.image}',
+                                    placeholder: (context, url) =>
+                                        const SizedBox(
+                                            height: 20.0,
+                                            width: 20.0,
+                                            child: CircularProgressIndicator()),
+                                    errorWidget: (context, url, error) =>
+                                        const Icon(Icons.error),
+                                  ),
+                          ),
+                        );
+                      },
                     ),
                     const SizedBox(height: 20.0),
                     Text(
@@ -118,7 +138,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         value: profile.isNotEmpty ? profile[4] : ''),
                     profileDetailsRows(
                         name: 'Full Name:',
-                        value: profile.isNotEmpty ? profile[1] : ''),
+                        value: profile.isNotEmpty
+                            ? profile[1].isNotEmpty
+                                ? profile[1]
+                                : '${profile[3]} ${profile[4]}'
+                            : ''),
                     profileDetailsRows(
                         name: 'Email:',
                         value: profile.isNotEmpty ? profile[5] : ''),
