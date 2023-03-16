@@ -206,6 +206,7 @@ class SocialAuthServices {
         );
       } else {
         Navigator.pop(context);
+        print('json res not success');
         showSnackBar(context, jsonDecode(res.body)['response']);
       }
     } catch (e) {

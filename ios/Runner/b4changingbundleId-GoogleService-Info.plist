@@ -3,23 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>482082401763-hb6hdaercdo7s5jp22i9po6uc51chlvq.apps.googleusercontent.com</string>
+	<string>341405675814-d6dhphl130glp5v73n216kj7hf5vl6lu.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.482082401763-hb6hdaercdo7s5jp22i9po6uc51chlvq</string>
-	<key>ANDROID_CLIENT_ID</key>
-	<string>482082401763-4o6sp7u802uqmgrqus7l7uki2n8e47f7.apps.googleusercontent.com</string>
+	<string>com.googleusercontent.apps.341405675814-d6dhphl130glp5v73n216kj7hf5vl6lu</string>
 	<key>API_KEY</key>
-	<string>AIzaSyB1kZa9lxuNxXFOHt2Zekw9NsC3XltFN80</string>
+	<string>AIzaSyDJr3OD6ONwoaW0K0WRXunA8ROPapfPIxU</string>
 	<key>GCM_SENDER_ID</key>
-	<string>482082401763</string>
+	<string>341405675814</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.taskshift.taskshift</string>
+	<string>com.example.taskshiftV1</string>
 	<key>PROJECT_ID</key>
-	<string>taskshift</string>
+	<string>taskshiftflutter</string>
 	<key>STORAGE_BUCKET</key>
-	<string>taskshift.appspot.com</string>
+	<string>taskshiftflutter.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -31,8 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:482082401763:ios:8f6105d3966e9b051bc4d6</string>
-	<key>DATABASE_URL</key>
-	<string>https://taskshift.firebaseio.com</string>
+	<string>1:341405675814:ios:15bc8f2f4903c1712f51e7</string>
 </dict>
 </plist>
