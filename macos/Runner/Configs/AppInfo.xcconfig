@@ -5,10 +5,10 @@
 // 'flutter create' template.
 
 // The application's name. By default this is also the title of the Flutter window.
-PRODUCT_NAME = taskshift_v1
+PRODUCT_NAME = TaskShift;
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.example.taskshiftV1
+PRODUCT_BUNDLE_IDENTIFIER = com.taskshift.taskshift;
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2022 com.example. All rights reserved.
